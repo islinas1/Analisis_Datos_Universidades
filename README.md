@@ -50,6 +50,13 @@ git clone https://github.com/tu-usuario/PROYECTO.git
 cd PROYECTO
 
 # 2. Instalar dependencias
+# en sta parte deben estar dentro de la carpeto de codigo
+py -m venv .venv
+
+#luego deben de activarlo
+.venv\Scripts\activate
+
+#por ultimo installar los requerimientos
 pip install -r requirements.txt
 
 # 3. Ejecutar el análisis
