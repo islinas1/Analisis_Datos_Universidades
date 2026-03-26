@@ -5,3 +5,7 @@ venv/
 .env
 .DS_Store
 Thumbs.db
+
+informe/main.out
+informe/main.log
+informe/main.aux
