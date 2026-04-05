@@ -25,7 +25,7 @@
 
 \maketitle
 
-\section*{Introducción}
+\section{Introducción}
 
 En el contexto global y particularmente en Bolivia, las universidades han asumido el reto de reducir la desigualdad, buscando democratizar el acceso al crecimiento profesional. Sin embargo, este incremento en la oferta educativa ha generado una paradoja: en lugar de equilibrar la balanza, ha consolidado la capacidad técnica de los centros donde se originaron estos modelos (como Europa), dejando rezagadas a otras regiones.
 
@@ -33,12 +33,12 @@ Bolivia, como nación latinoamericana, enfrenta esta brecha con un agravante est
 
 El presente informe analiza los datos históricos de las universidades en Bolivia para diagnosticar el panorama educativo actual y evaluar si el camino trazado es el adecuado para los desafíos futuros. Si bien el mercado laboral presenta dificultades evidentes para los nuevos profesionales, este estudio no se centra en la empleabilidad, sino en el comportamiento de la accesibilidad a la educación visto desde perspectiva de las matrículas. Se parte de la premisa de que la educación superior mantiene su vigencia y utilidad, incluso en sectores tradicionalmente informales como los negocios. Por tanto, esta investigación se limita a un análisis descriptivo y prospectivo de los datos académicos disponibles.
 
-\section*{Objetivos}
+\section{Objetivos}
 
-\subsection*{Objetivo General}
+\subsection{Objetivo General}
 Analizar la evolución temporal del crecimiento y las desigualdades de género en las matrículas y titulaciones de la educación superior en Bolivia, para identificar las áreas de estudio y ciudades con mayores brechas educativas.
 
-\subsection*{Objetivos Específicos}
+\subsection{Objetivos Específicos}
 
 \begin{itemize}
     \item \textbf{Cuantificar la evolución de la matrícula:} Identificar las tasas de crecimiento anual de inscritos en el sistema universitario boliviano durante el periodo de estudio.
@@ -48,7 +48,7 @@ Analizar la evolución temporal del crecimiento y las desigualdades de género e
     \item \textbf{Proyectar tendencias futuras:} Aplicar modelos descriptivos para estimar el comportamiento de la matrícula en los próximos años basándose en los datos históricos.
 \end{itemize}
 
-\section*{Metodología}
+\section{Metodología}
 
 Para el análisis de los datos se usará lo que es la metodologia CRISP-DM que es un acrónimo de de Cross-Industry Standard Process for Data Mining. Este es un modelo de proceso estándar, ampliamente reconocido y utilizado en la industria, que describe los pasos necesarios para llevar a cabo con éxito un proyecto de minería de datos o de análisis de datos.
 
@@ -80,7 +80,7 @@ El uso de esta medologia se debe a su estructura metodológica y rigor ya que pr
   \item Alineación con el estado del arte (evaluación)
 \end{itemize}
 
-\section*{Descripción de los Datos}
+\section{Descripción de los Datos}
 
 El conjunto de datos utilizado para esta investigación contiene registros históricos sobre el sistema universitario boliviano. A continuación, se presenta el diccionario de datos que describe las variables analizadas:
 
@@ -96,13 +96,13 @@ El conjunto de datos utilizado para esta investigación contiene registros hist�
 \end{description}
 
 
-\subsection*{Observaciones del Dataset}
+\subsection{Observaciones del Dataset}
 
 Al inspeccionar la muestra de datos, se observa que existen registros con valores en cero en las columnas de matriculados y titulados (ej. Medicina en Beni en 2007). Esto sugiere la necesidad de un proceso de limpieza para distinguir entre carreras sin movimiento académico y posibles omisiones de registro en la fuente original.
 
-\section*{Preprocesamiento}
+\section{Preprocesamiento}
 
-\subsection*{Exploración de los datos}
+\subsection{Exploración de los datos}
 
 Los datos son de naturaleza diversa. Se verán algunas de las columnas numéricas representadas gráficamente. Se puede ver como muchos de los datos están desbalanceados de manera considerable, dejando a muchos datos fuera de los cuartiles 1 y 3, esto en la \ref{fig:fig1}. Respecto a como se escogen las carreras, se puede observar como existen diferencias entre hombres y mujeres. En la figura \ref{fig:fig2} se puede ver que existen carreras como las de Salud que tiene proporciones más altas de mujeres, o como Ingeniería que igual tiene diferencias pero no son tan marcadas.
 
@@ -205,7 +205,7 @@ BENI          213.3    220.4  433.7
 PANDO         128.9    173.7  302.6
 \end{verbatim}
 
-\section*{Imputación de datos faltantes}
+\section{Imputación de datos faltantes}
 
 Para ver si existen datos faltantes se corrió un script que mostraba los mismos. El resultado fue este:
 
@@ -230,7 +230,7 @@ Para ver si existen datos faltantes se corrió un script que mostraba los mismos
 
 Los datos fueron imputados con la mediana debido a que esta no incurre en un sesgo mayor como el que produce la media, que en este caso al ser una distribución sesgada podria producir un desbalance mayor.
 
-\section*{Tratamiento de outliers}
+\section{Tratamiento de outliers}
 
 Para detectar los outliers se utilizó dos métodos. El primero es el IQR en los cuartiles 1 y 3, con ello se puedo ver los siguiente:
 
