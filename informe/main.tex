@@ -1,6 +1,6 @@
 % para complilar hacer
 % pdflatex -jobname=Informe main.tex
-%
+
 \documentclass[12pt]{article}
 
 % --- Paquetes Básicos ---
@@ -21,7 +21,6 @@
         Salinas Condori Ian Ezequiel \\
        }
 \date{\today}
-
 \begin{document}
 
 \maketitle
@@ -49,6 +48,38 @@ Analizar la evolución temporal del crecimiento y las desigualdades de género e
     \item \textbf{Proyectar tendencias futuras:} Aplicar modelos descriptivos para estimar el comportamiento de la matrícula en los próximos años basándose en los datos históricos.
 \end{itemize}
 
+\section*{Metodología}
+
+Para el análisis de los datos se usará lo que es la metodologia CRISP-DM que es un acrónimo de de Cross-Industry Standard Process for Data Mining. Este es un modelo de proceso estándar, ampliamente reconocido y utilizado en la industria, que describe los pasos necesarios para llevar a cabo con éxito un proyecto de minería de datos o de análisis de datos.
+
+Este marco de trabajo proporciona una estructura iterativa y cíclica que organiza el flujo de trabajo en seis fases interconectadas, las cuales son:
+
+\begin{enumerate}
+  \item \textbf{Comprensión del Negocio (Business Understanding)}: Esta fase inicial se centra en la definición de los objetivos del proyecto y los requisitos desde una perspectiva de negocio. Se busca transformar este conocimiento en una definición de problema técnico y en un plan preliminar diseñado para alcanzar los objetivos establecidos.
+  \item \textbf{Comprensión de los Datos (Data Understanding)}: Consiste en la recolección inicial de datos y la realización de actividades destinadas a familiarizarse con ellos. El propósito es identificar problemas de calidad, descubrir conocimientos preliminares o detectar subconjuntos interesantes de información para formar hipótesis sobre datos ocultos.
+  \item \textbf{Preparación de los Datos (Data Preparation)}: Esta etapa abarca todas las actividades necesarias para construir el conjunto de datos final que será introducido en las herramientas de modelado. Las tareas incluyen la selección de tablas, registros y atributos, así como la limpieza y transformación de los datos para adecuarlos al análisis.
+  \item \textbf{Modelado (Modeling)}: En esta fase se seleccionan y aplican diversas técnicas de modelado y se calibran sus parámetros a valores óptimos. Debido a que algunas técnicas requieren formatos de datos específicos, a menudo es necesario regresar a la fase de preparación de datos durante este proceso.
+  \item \textbf{Evaluación (Evaluation)}: Una vez construido el modelo (o modelos), se debe evaluar su calidad y eficacia antes de proceder al despliegue. Se verifica si el modelo cumple con los objetivos de negocio definidos en la primera fase y se determina si existe alguna razón importante por la cual el modelo no deba ser utilizado.
+  \item \textbf{Despliegue (Deployment)}: La creación del modelo no marca el final del proyecto. Los conocimientos obtenidos deben ser organizados y presentados de manera que el usuario final pueda utilizarlos. Dependiendo de los requisitos, esta fase puede ser tan simple como la generación de un informe o tan compleja como la implementación de un proceso de minería de datos repetible en la infraestructura de la organización.
+\end{enumerate}
+
+Las características principales de esta metodologia son que:
+
+\begin{itemize}
+  \item \textbf{Iteratividad}: El proceso no es estrictamente lineal. Es habitual retroceder a fases anteriores según los hallazgos realizados en etapas posteriores.
+  \item \textbf{Neutralidad}: Es un estándar independiente de las herramientas tecnológicas o del sector industrial donde se aplique.
+  \item \textbf{Orientación} a Objetivos: Prioriza los resultados de negocio sobre las tareas puramente técnicas.
+\end{itemize}
+
+El uso de esta medologia se debe a su estructura metodológica y rigor ya que proporciona un marco sistemático que garantiza que ninguna etapa crítica del método científico —desde la observación (comprensión de datos) hasta la validación (evaluación)— sea omitida. Entre otros puntos tambien se encuentran la:
+
+\begin{itemize}
+  \item Replicabilidad y documentación
+  \item Naturaleza iterativa y no lineal
+  \item Mitigación de sesgos y error temprano (énfasis en la fase de comprensión de los datos)
+  \item Alineación con el estado del arte (evaluación)
+\end{itemize}
+
 \section*{Descripción de los Datos}
 
 El conjunto de datos utilizado para esta investigación contiene registros históricos sobre el sistema universitario boliviano. A continuación, se presenta el diccionario de datos que describe las variables analizadas:
@@ -63,6 +94,7 @@ El conjunto de datos utilizado para esta investigación contiene registros hist�
     \item[\textbf{NUEVOS (H/M):}] Cantidad de alumnos que ingresaron por primera vez a la carrera en ese año (estudiantes nuevos).
     \item[\textbf{TITULADOS (H/M):}] Cantidad de estudiantes que completaron sus estudios y obtuvieron su grado académico en esa gestión.
 \end{description}
+
 
 \subsection*{Observaciones del Dataset}
 
