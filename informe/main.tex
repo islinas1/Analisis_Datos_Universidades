@@ -1,17 +1,31 @@
 % para complilar hacer
 % pdflatex -jobname=Informe main.tex
 
-\documentclass[12pt]{article}
+% esto para para usar dos columna
+\documentclass[10pt, twocolumn]{article}
+% esto para para usar solo una columna
+% \documentclass{article}
 
-% --- Paquetes Básicos ---
+% paquetes básicos
 \usepackage[utf8]{inputenc}
 \usepackage[spanish]{babel}
+
+% paquetes para la geometria del documento
 \usepackage{geometry}
-\geometry{a4paper, margin=2.5cm}
+\geometry{
+    a4paper,
+    left=0.5in,
+    right=0.5in,
+    top=0.8in,
+    bottom=0.8in,
+    columnsep=0.3in
+}
+
 \usepackage{amsmath, amsfonts} % Para fórmulas matemáticas si las necesitas
 \usepackage{hyperref} % Para enlaces
 \usepackage{graphicx} % Para insertar imágenes
 \usepackage{float}    % Para usar el modificador [H] que fija la imagen en un lugar
+\usepackage{lipsum}
 
 % --- Datos del Informe ---
 \title{Evolución de la Educación Superior en Bolivia: Un Estudio Temporal sobre el Crecimiento y la Desigualdad de Género en Matrículas y Titulaciones}
@@ -25,7 +39,9 @@
 
 \maketitle
 
-\section{Introducción}
+\section{Contextualización y Definición del Problema}
+
+\subsection{Marco teórico y contextual}
 
 En el contexto global y particularmente en Bolivia, las universidades han asumido el reto de reducir la desigualdad, buscando democratizar el acceso al crecimiento profesional. Sin embargo, este incremento en la oferta educativa ha generado una paradoja: en lugar de equilibrar la balanza, ha consolidado la capacidad técnica de los centros donde se originaron estos modelos (como Europa), dejando rezagadas a otras regiones.
 
@@ -33,12 +49,28 @@ Bolivia, como nación latinoamericana, enfrenta esta brecha con un agravante est
 
 El presente informe analiza los datos históricos de las universidades en Bolivia para diagnosticar el panorama educativo actual y evaluar si el camino trazado es el adecuado para los desafíos futuros. Si bien el mercado laboral presenta dificultades evidentes para los nuevos profesionales, este estudio no se centra en la empleabilidad, sino en el comportamiento de la accesibilidad a la educación visto desde perspectiva de las matrículas. Se parte de la premisa de que la educación superior mantiene su vigencia y utilidad, incluso en sectores tradicionalmente informales como los negocios. Por tanto, esta investigación se limita a un análisis descriptivo y prospectivo de los datos académicos disponibles.
 
-\section{Objetivos}
+\subsection{Problematica}
 
-\subsection{Objetivo General}
+\subsubsection{Problema principal}
+
+A pesar de los esfuerzos por masificar la educación superior en Bolivia, persiste una incertidumbre sobre la equidad y eficiencia del crecimiento de la matrícula. El problema central radica en la falta de un diagnóstico cuantitativo que determine si el aumento en el acceso a la universidad está reduciendo las brechas de género y desigualdades geográficas, o si simplemente está replicando modelos de concentración urbana y segregación por áreas de estudio que no se alinean con la realidad socioeconómica del país.
+
+\subsubsection{Problemas secundarios}
+
+\begin{itemize}
+  \item \textbf{Desconocimiento del ritmo de expansión}: No se tiene una medición precisa de la tasa de crecimiento anual de la matrícula, lo que impide determinar si el sistema universitario boliviano está en una fase de expansión sostenible o de estancamiento.
+  \item \textbf{Segregación de género persistente}: Existe una brecha invisible en la elección de carreras y tasas de titulación entre hombres y mujeres, lo que sugiere que el acceso no es equitativo en todas las áreas del conocimiento (especialmente en sectores técnicos o de servicios).
+  \item \textbf{Macrocefalia académica departamental}: La oferta y demanda educativa parecen estar altamente concentradas en el "eje troncal", dejando a los departamentos periféricos en una situación de desventaja competitiva y limitando la democratización del acceso profesional.
+  \item \textbf{Desconexión entre formación y estructura económica}: Se observa una posible asimetría entre las áreas de estudio con mayor volumen de matriculados y las necesidades de un mercado laboral marcado por la informalidad, lo que podría generar una saturación en sectores de baja productividad.
+  \item \textbf{Incertidumbre prospectiva}: La ausencia de proyecciones basadas en datos históricos dificulta la planificación estratégica de las instituciones educativas para anticipar la demanda futura de infraestructura y recursos docentes.
+\end{itemize}
+
+\subsection{Objetivos}
+
+\subsubsection{Objetivo General}
 Analizar la evolución temporal del crecimiento y las desigualdades de género en las matrículas y titulaciones de la educación superior en Bolivia, para identificar las áreas de estudio y ciudades con mayores brechas educativas.
 
-\subsection{Objetivos Específicos}
+\subsubsection{Objetivos Específicos}
 
 \begin{itemize}
     \item \textbf{Cuantificar la evolución de la matrícula:} Identificar las tasas de crecimiento anual de inscritos en el sistema universitario boliviano durante el periodo de estudio.
@@ -48,30 +80,24 @@ Analizar la evolución temporal del crecimiento y las desigualdades de género e
     \item \textbf{Proyectar tendencias futuras:} Aplicar modelos descriptivos para estimar el comportamiento de la matrícula en los próximos años basándose en los datos históricos.
 \end{itemize}
 
-\section{Metodología}
+\subsection{Justificación y alcance}
 
-Para el análisis de los datos se usará lo que es la metodologia CRISP-DM que es un acrónimo de de Cross-Industry Standard Process for Data Mining. Este es un modelo de proceso estándar, ampliamente reconocido y utilizado en la industria, que describe los pasos necesarios para llevar a cabo con éxito un proyecto de minería de datos o de análisis de datos.
+\lipsum[1][1]
 
-Este marco de trabajo proporciona una estructura iterativa y cíclica que organiza el flujo de trabajo en seis fases interconectadas, las cuales son:
+\subsection{Metodología usada}
+
+Para el análisis de los datos se usará lo que es la metodologia CRISP-DM que es un acrónimo de de Cross-Industry Standard Process for Data Mining. Este es un modelo de proceso estándar, ampliamente reconocido y utilizado en la industria, que describe los pasos necesarios para llevar a cabo con éxito un proyecto de minería de datos o de análisis de datos. Este marco de trabajo proporciona una estructura iterativa y cíclica que organiza el flujo de trabajo en las siguientes seis fases:
 
 \begin{enumerate}
-  \item \textbf{Comprensión del Negocio (Business Understanding)}: Esta fase inicial se centra en la definición de los objetivos del proyecto y los requisitos desde una perspectiva de negocio. Se busca transformar este conocimiento en una definición de problema técnico y en un plan preliminar diseñado para alcanzar los objetivos establecidos.
-  \item \textbf{Comprensión de los Datos (Data Understanding)}: Consiste en la recolección inicial de datos y la realización de actividades destinadas a familiarizarse con ellos. El propósito es identificar problemas de calidad, descubrir conocimientos preliminares o detectar subconjuntos interesantes de información para formar hipótesis sobre datos ocultos.
-  \item \textbf{Preparación de los Datos (Data Preparation)}: Esta etapa abarca todas las actividades necesarias para construir el conjunto de datos final que será introducido en las herramientas de modelado. Las tareas incluyen la selección de tablas, registros y atributos, así como la limpieza y transformación de los datos para adecuarlos al análisis.
+  \item \textbf{Comprensión del Negocio (Business Understanding)}: Esta fase inicial se centra en la definición de los objetivos del proyecto y los requisitos desde una perspectiva de negocio o la institución.
+  \item \textbf{Comprensión de los Datos (Data Understanding)}: Consiste en la recolección inicial de datos y la realización de actividades destinadas a familiarizarse con ellos.
+  \item \textbf{Preparación de los Datos (Data Preparation)}: Esta etapa abarca todas las actividades necesarias para construir el conjunto de datos final que será introducido en las herramientas de modelado.
   \item \textbf{Modelado (Modeling)}: En esta fase se seleccionan y aplican diversas técnicas de modelado y se calibran sus parámetros a valores óptimos. Debido a que algunas técnicas requieren formatos de datos específicos, a menudo es necesario regresar a la fase de preparación de datos durante este proceso.
-  \item \textbf{Evaluación (Evaluation)}: Una vez construido el modelo (o modelos), se debe evaluar su calidad y eficacia antes de proceder al despliegue. Se verifica si el modelo cumple con los objetivos de negocio definidos en la primera fase y se determina si existe alguna razón importante por la cual el modelo no deba ser utilizado.
-  \item \textbf{Despliegue (Deployment)}: La creación del modelo no marca el final del proyecto. Los conocimientos obtenidos deben ser organizados y presentados de manera que el usuario final pueda utilizarlos. Dependiendo de los requisitos, esta fase puede ser tan simple como la generación de un informe o tan compleja como la implementación de un proceso de minería de datos repetible en la infraestructura de la organización.
+  \item \textbf{Evaluación (Evaluation)}: Una vez construido el modelo (o modelos), se debe evaluar su calidad, eficacia y si el modelo cumple con los objetivos definidos en la primera fase y se determina si existe alguna razón importante por la cual el modelo no deba ser utilizado.
+  \item \textbf{Despliegue (Deployment)}: Los conocimientos obtenidos deben ser organizados y presentados de manera que el usuario final pueda utilizarlos.
 \end{enumerate}
 
-Las características principales de esta metodologia son que:
-
-\begin{itemize}
-  \item \textbf{Iteratividad}: El proceso no es estrictamente lineal. Es habitual retroceder a fases anteriores según los hallazgos realizados en etapas posteriores.
-  \item \textbf{Neutralidad}: Es un estándar independiente de las herramientas tecnológicas o del sector industrial donde se aplique.
-  \item \textbf{Orientación} a Objetivos: Prioriza los resultados de negocio sobre las tareas puramente técnicas.
-\end{itemize}
-
-El uso de esta medologia se debe a su estructura metodológica y rigor ya que proporciona un marco sistemático que garantiza que ninguna etapa crítica del método científico —desde la observación (comprensión de datos) hasta la validación (evaluación)— sea omitida. Entre otros puntos tambien se encuentran la:
+La metodología CRISP-DM destaca por su naturaleza cíclica y su versatilidad, siendo un estándar agnóstico al sector o tecnología empleada. Su valor reside en su capacidad para alinear los requisitos técnicos con las metas estratégicas del negocio. La elección de este marco responde a su robustez y rigor, garantizando que el proceso siga un hilo conductor sistemático —desde la fase de observación hasta la evaluación final— sin omitir etapas fundamentales del método científico. Entre sus ventajas adicionales se encuentran:
 
 \begin{itemize}
   \item Replicabilidad y documentación
@@ -80,42 +106,42 @@ El uso de esta medologia se debe a su estructura metodológica y rigor ya que pr
   \item Alineación con el estado del arte (evaluación)
 \end{itemize}
 
-\section{Descripción de los Datos}
+
+\subsection{Caracterización y exploración del corpus de datos}
+
+\subsubsection{Identificación de la fuente de información}
+
+\lipsum[1][1]
+
+\subsubsection{Diccionario de Variables y Atributos}
 
 El conjunto de datos utilizado para esta investigación contiene registros históricos sobre el sistema universitario boliviano. A continuación, se presenta el diccionario de datos que describe las variables analizadas:
 
-\begin{description}
-    \item[\textbf{ÁREA:}] Categoría general del conocimiento a la que pertenece la carrera (ej. Ciencias de la Salud, Ciencias Económicas).
-    \item[\textbf{CARRERA:}] Nombre específico del programa académico.
-    \item[\textbf{CIUDAD:}] Ubicación geográfica (Departamento) donde se encuentra la sede universitaria.
-    \item[\textbf{AÑO:}] Período de registro de los datos (variable temporal).
-    \item[\textbf{TIPO DE EDUCACIÓN:}] Clasificación de la institución según su dependencia (Pública o Privada).
-    \item[\textbf{MATRICULADOS (H/M):}] Número total de alumnos inscritos en la gestión, desglosado por hombres (H) y mujeres (M).
-    \item[\textbf{NUEVOS (H/M):}] Cantidad de alumnos que ingresaron por primera vez a la carrera en ese año (estudiantes nuevos).
-    \item[\textbf{TITULADOS (H/M):}] Cantidad de estudiantes que completaron sus estudios y obtuvieron su grado académico en esa gestión.
-\end{description}
+\begin{itemize}
+    \item \textbf{ÁREA:} Categoría general del conocimiento a la que pertenece la carrera (ej. Ciencias de la Salud, Ciencias Económicas).
+    \item \textbf{CARRERA:} Nombre específico del programa académico.
+    \item \textbf{CIUDAD:} Ubicación geográfica (Departamento) donde se encuentra la sede universitaria.
+    \item \textbf{AÑO:} Período de registro de los datos (variable temporal).
+    \item \textbf{TIPO DE EDUCACIÓN:} Clasificación de la institución según su dependencia (Pública o Privada).
+    \item \textbf{MATRICULADOS (H/M):} Número total de alumnos inscritos en la gestión, desglosado por hombres (H) y mujeres (M).
+    \item \textbf{NUEVOS (H/M):} Cantidad de alumnos que ingresaron por primera vez a la carrera en ese año (estudiantes nuevos).
+    \item \textbf{TITULADOS (H/M):} Cantidad de estudiantes que completaron sus estudios y obtuvieron su grado académico en esa gestión.
+\end{itemize}
 
-
-\subsection{Observaciones del Dataset}
-
-Al inspeccionar la muestra de datos, se observa que existen registros con valores en cero en las columnas de matriculados y titulados (ej. Medicina en Beni en 2007). Esto sugiere la necesidad de un proceso de limpieza para distinguir entre carreras sin movimiento académico y posibles omisiones de registro en la fuente original.
-
-\section{Preprocesamiento}
-
-\subsection{Exploración de los datos}
+\subsubsection{Análisis exploratorio de datos (EDA)}
 
 Los datos son de naturaleza diversa. Se verán algunas de las columnas numéricas representadas gráficamente. Se puede ver como muchos de los datos están desbalanceados de manera considerable, dejando a muchos datos fuera de los cuartiles 1 y 3, esto en la \ref{fig:fig1}. Respecto a como se escogen las carreras, se puede observar como existen diferencias entre hombres y mujeres. En la figura \ref{fig:fig2} se puede ver que existen carreras como las de Salud que tiene proporciones más altas de mujeres, o como Ingeniería que igual tiene diferencias pero no son tan marcadas.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.8\textwidth]{fig1_boxplots.png} 
+    \includegraphics[width=0.8\columnwidth]{fig1_boxplots.png} 
     \caption{Boxplot de las columnas numéricas}
     \label{fig:fig1}
 \end{figure}
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.8\textwidth]{fig2_dispersion.png} 
+    \includegraphics[width=0.8\columnwidth]{fig2_dispersion.png} 
     \caption{Gráfico de dispersión}
     \label{fig:fig2}
 \end{figure}
@@ -124,14 +150,14 @@ Esta difernecia entre los géneros y carreras se puede ver con mayor claridad en
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.8\textwidth]{fig3_barras_area.png} 
+    \includegraphics[width=0.8\columnwidth]{fig3_barras_area.png} 
     \caption{Gráfico de barras por área}
     \label{fig:fig3}
 \end{figure}
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.8\textwidth]{fig4_barras_ciudad.png} 
+    \includegraphics[width=0.8\columnwidth]{fig4_barras_ciudad.png} 
     \caption{Gráfico de barras por ciudad}
     \label{fig:fig4}
 \end{figure}
@@ -140,14 +166,14 @@ Como los datos tienen una columan para el tiempo, tambien podemos verlo en la \r
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.8\textwidth]{fig5_evolucion.png} 
+    \includegraphics[width=0.8\columnwidth]{fig5_evolucion.png} 
     \caption{Gráfico de barras por ciudad}
     \label{fig:fig5}
 \end{figure}
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.8\textwidth]{fig7_media_vs_mediana.png} 
+    \includegraphics[width=0.8\columnwidth]{fig7_media_vs_mediana.png} 
     \caption{Gráfico de barras por ciudad}
     \label{fig:fig7}
 \end{figure}
@@ -156,7 +182,7 @@ Finalmente la comparación entre universidades públicas y privadas se puede ver
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.8\textwidth]{fig8_publica_vs_privada.png} 
+    \includegraphics[width=0.8\columnwidth]{fig8_publica_vs_privada.png} 
     \caption{Gráfico de barras por ciudad}
     \label{fig:fig8}
 \end{figure}
@@ -205,7 +231,25 @@ BENI          213.3    220.4  433.7
 PANDO         128.9    173.7  302.6
 \end{verbatim}
 
-\section{Imputación de datos faltantes}
+
+\subsubsection{Análisis descriptivo y medidas de tendencia central}
+
+\lipsum[1][1]
+
+\subsubsection{Diagnóstico de la calidad de los datos}
+
+Al inspeccionar la muestra de datos, se observa que existen registros con valores en cero en las columnas de matriculados y titulados (ej. Medicina en Beni en 2007). Esto sugiere la necesidad de un proceso de limpieza para distinguir entre carreras sin movimiento académico y posibles omisiones de registro en la fuente original.
+
+\lipsum[1][1]
+
+\subsubsection{Análisis e intepretacion preliminar de los datos}
+
+Primeras interpretaciones visuales y estadísticas.
+\lipsum[1][1]
+
+\section{Preparación de los datos}
+
+\subsection{Imputación de datos faltantes}
 
 Para ver si existen datos faltantes se corrió un script que mostraba los mismos. El resultado fue este:
 
@@ -230,7 +274,7 @@ Para ver si existen datos faltantes se corrió un script que mostraba los mismos
 
 Los datos fueron imputados con la mediana debido a que esta no incurre en un sesgo mayor como el que produce la media, que en este caso al ser una distribución sesgada podria producir un desbalance mayor.
 
-\section{Tratamiento de outliers}
+\subsection{Tratamiento de outliers}
 
 Para detectar los outliers se utilizó dos métodos. El primero es el IQR en los cuartiles 1 y 3, con ello se puedo ver los siguiente:
 
@@ -280,7 +324,7 @@ Se escogió el segundo método ya que tenia muchos menos outliers y además los 
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.8\textwidth]{fig6_comparativa_outliers.png} 
+    \includegraphics[width=0.8\columnwidth]{fig6_comparativa_outliers.png} 
     \caption{Gráfico de barras por ciudad}
     \label{fig:fig6}
 \end{figure}
