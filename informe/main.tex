@@ -187,37 +187,64 @@ Finalmente la comparación entre universidades públicas y privadas se puede ver
     \label{fig:fig8}
 \end{figure}
 
-También se usaron scripts de Python para sacar un resultado númerico:
+\subsubsection{Análisis descriptivo y medidas de tendencia central}
 
+Se usaron scripts de python para sacar las medidas descriptivas.
+
+\textbf{Estadisticas 1:}
 
 \begin{verbatim}
-============================================================
+=======================================
 MÉTRICAS DESCRIPTIVAS
-============================================================
-   Var     N  Media  Mediana   Std  Mín    Máx  Asimetría  Curtosis
- Mat.H 10263  357.8    138.0 607.8  0.0 8628.0        4.7      35.5
- Mat.M 10263  347.0    116.0 633.0  0.0 6978.0        4.1      23.1
-Nuev.H 10263  153.5     68.0 260.3  0.0 2944.0        4.1      22.0
-Nuev.M 10263  149.2     48.0 283.8  0.0 4712.0        4.9      36.7
- Tit.H 10263   18.9      5.0  40.1  0.0  997.0        5.8      70.2
- Tit.M 10263   21.3      5.0  43.9  0.0  494.0        4.0      21.2
+=======================================
+   Var     N  Media  Mediana   Std  Mín
+ Mat.H 10263  357.8    138.0 607.8  0.0
+ Mat.M 10263  347.0    116.0 633.0  0.0
+Nuev.H 10263  153.5     68.0 260.3  0.0
+Nuev.M 10263  149.2     48.0 283.8  0.0
+ Tit.H 10263   18.9      5.0  40.1  0.0
+ Tit.M 10263   21.3      5.0  43.9  0.0
+
+=====================        
+MÉTRICAS DESCRIPTIVAS
+=====================        
+    Máx  Asimetría  Curtosis 
+ 8628.0        4.7      35.5 
+ 6978.0        4.1      23.1 
+ 2944.0        4.1      22.0 
+ 4712.0        4.9      36.7 
+  997.0        5.8      70.2 
+  494.0        4.0      21.2 
+
 \end{verbatim}
 
+\textbf{Estadisticas 2:}
 
 \begin{verbatim}
-============================================================
+=========================================
 MÉTRICAS DESCRIPTIVAS
-============================================================
-                   Mat.H  Mat.M  Nuev.H  Nuev.M  Tit.H  Tit.M
-TIPO DE EDUCACIÓN                                            
-PRIVADA            200.7  183.1   129.6   108.3   14.4   13.8
-PUBLICA            522.1  518.3   178.4   191.9   23.5   29.1
+=========================================
+                   Mat.H  Mat.M  Nuev.H  
+TIPO DE EDUCACIÓN                        
+PRIVADA            200.7  183.1   129.6  
+PUBLICA            522.1  518.3   178.4  
+
+===================  
+MÉTRICAS DESCRIPTIVAS
+===================  
+Nuev.M  Tit.H  Tit.M 
+                     
+ 108.3   14.4   13.8 
+ 191.9   23.5   29.1 
+
 \end{verbatim}
 
+\textbf{Estadisticas 3:}
+
 \begin{verbatim}
-============================================================
+===================================
 MÉTRICAS DESCRIPTIVAS
-============================================================
+===================================
             Hombres  Mujeres  Total
 CIUDAD                             
 LA PAZ        490.7    456.0  946.7
@@ -231,20 +258,14 @@ BENI          213.3    220.4  433.7
 PANDO         128.9    173.7  302.6
 \end{verbatim}
 
-
-\subsubsection{Análisis descriptivo y medidas de tendencia central}
-
-\lipsum[1][1]
-
 \subsubsection{Diagnóstico de la calidad de los datos}
 
 Al inspeccionar la muestra de datos, se observa que existen registros con valores en cero en las columnas de matriculados y titulados (ej. Medicina en Beni en 2007). Esto sugiere la necesidad de un proceso de limpieza para distinguir entre carreras sin movimiento académico y posibles omisiones de registro en la fuente original.
 
-\lipsum[1][1]
-
 \subsubsection{Análisis e intepretacion preliminar de los datos}
 
 Primeras interpretaciones visuales y estadísticas.
+
 \lipsum[1][1]
 
 \section{Preparación de los datos}
@@ -254,9 +275,9 @@ Primeras interpretaciones visuales y estadísticas.
 Para ver si existen datos faltantes se corrió un script que mostraba los mismos. El resultado fue este:
 
 \begin{verbatim}
-============================================================
-2. DATOS FALTANTES
-============================================================
+============================================
+2. DATOS FALTANTES                          
+============================================
   Filas sin datos (todos ceros): 2,301 (22.4%)
 
   Variable     Faltantes     Media   Mediana
@@ -267,6 +288,20 @@ Para ver si existen datos faltantes se corrió un script que mostraba los mismos
   Nuev.M           2,301     175.1      64.0
   Tit.H            2,301      21.3       6.0
   Tit.M            2,301      25.2       6.0
+
+========================= 
+2. DATOS FALTANTES                                           
+========================= 
+301 (22.4%)               
+                          
+  Mediana                 
+---------                 
+    176.0                 
+    141.0                 
+     76.0                 
+     64.0                 
+      6.0                 
+      6.0                 
 
   Método: mediana por grupo (ÁREA + TIPO DE EDUCACIÓN)
   NaN restantes: 0
@@ -279,31 +314,52 @@ Los datos fueron imputados con la mediana debido a que esta no incurre en un ses
 Para detectar los outliers se utilizó dos métodos. El primero es el IQR en los cuartiles 1 y 3, con ello se puedo ver los siguiente:
 
 \begin{verbatim}
-============================================================
+====================================
 3. DETECCIÓN DE OUTLIERS
-============================================================
+====================================
 
    Método IQR (1.5 × IQR) 
-  Var            Q1      Q3     IQR   Límite Outliers      %
-  Mat.H          65     374     308      836    1,109  11.1%
-  Mat.M          37     395     358      932    1,010  10.1%
-  Nuev.H         36     170     134      371      970  10.1%
-  Nuev.M         22     179     157      414      847   8.9%
-  Tit.H           3      22      19       50    1,040  12.6%
-  Tit.M           3      27      24       63      932  11.7%
+  Var            Q1      Q3     IQR 
+  Mat.H          65     374     308 
+  Mat.M          37     395     358 
+  Nuev.H         36     170     134 
+  Nuev.M         22     179     157 
+  Tit.H           3      22      19 
+  Tit.M           3      27      24 
+
+======================== 
+3. DETECCIÓN DE OUTLIERS
+======================== 
+                         
+  Límite Outliers      % 
+     836    1,109  11.1% 
+     932    1,010  10.1% 
+     371      970  10.1% 
+     414      847   8.9% 
+      50    1,040  12.6% 
+      63      932  11.7% 
 \end{verbatim}
 
 También se usó la Winsorización al 5 y 95\%
 
 \begin{verbatim}
    Winsorización (P5 – P95) 
-  Var          Media    → Win      Std    → Win   Afect
-  Mat.H        366.7    322.4    612.6    407.0     991
-  Mat.M        357.8    304.8    639.8    409.4     961
-  Nuev.H       164.2    140.2    266.0    161.0     952
-  Nuev.M       160.6    133.5    291.4    168.5     839
-  Tit.H         23.4     20.3     43.5     29.0     411
-  Tit.M         27.3     23.7     48.1     33.2     400
+  Var          Media    → Win
+  Mat.H        366.7    322.4
+  Mat.M        357.8    304.8
+  Nuev.H       164.2    140.2
+  Nuev.M       160.6    133.5
+  Tit.H         23.4     20.3
+  Tit.M         27.3     23.7
+
+   Winsorización (P5 – P95) 
+      Std    → Win   Afect 
+    612.6    407.0     991 
+    639.8    409.4     961 
+    266.0    161.0     952 
+    291.4    168.5     839 
+     43.5     29.0     411 
+     48.1     33.2     400 
 \end{verbatim}
 
 Finalmente antes de realizar una acción se comparó ambos resultados:
