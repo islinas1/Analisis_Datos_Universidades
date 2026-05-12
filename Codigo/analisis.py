@@ -1,9 +1,11 @@
+# %%
 import pandas as pd
 import numpy as np
 from scipy import stats
 import matplotlib.pyplot as plt
 import os
 
+# %%
 plt.style.use("dark_background")
 CYAN, PINK, PURPLE = "#06b6d4", "#f472b6", "#a78bfa"
 GREEN, ORANGE, RED = "#34d399", "#fb923c", "#ef4444"
@@ -37,6 +39,7 @@ OUT = os.path.join(DIR, "..", "informe")
 os.makedirs(OUT, exist_ok=True)
 
 
+# %%
 def guardar(fig, nombre):
     """Guarda figura en la carpeta informe."""
     ruta = os.path.join(OUT, nombre)
@@ -45,6 +48,7 @@ def guardar(fig, nombre):
     print(f"  ✓ {nombre}")
 
 
+# %%
 # ================================================================
 # 1. CARGA
 # ================================================================
@@ -59,6 +63,7 @@ print(f"  Departamentos: {sorted(df['CIUDAD'].unique())}")
 print(f"  Tipo: {list(df['TIPO DE EDUCACIÓN'].unique())}")
 
 
+# %%
 # ================================================================
 # 2. DATOS FALTANTES
 # ================================================================
@@ -74,6 +79,7 @@ df_work = df.copy()
 for c in COLS:
     df_work.loc[todo_cero, c] = np.nan
 
+# %%
 # Resumen antes de imputar
 print(f"\n  {'Variable':<12} {'Faltantes':>9} {'Media':>9} {'Mediana':>9}")
 print(f"  {'-'*12} {'-'*9} {'-'*9} {'-'*9}")
@@ -83,6 +89,7 @@ for c in COLS:
     md = df_work[c].median()
     print(f"  {CORTO[c]:<12} {na:>9,} {me:>9.1f} {md:>9.1f}")
 
+# %%
 # Imputar con mediana por grupo
 for c in COLS:
     mediana_grupo = df_work.groupby(["ÁREA", "TIPO DE EDUCACIÓN"])[c].transform("median")
@@ -92,6 +99,7 @@ print(f"\n  Método: mediana por grupo (ÁREA + TIPO DE EDUCACIÓN)")
 print(f"  NaN restantes: {df_work[COLS].isna().sum().sum()}")
 
 
+# %%
 # ================================================================
 # 3. OUTLIERS
 # ================================================================
@@ -99,6 +107,7 @@ print("\n" + "=" * 60)
 print("3. DETECCIÓN DE OUTLIERS")
 print("=" * 60)
 
+# %%
 # 3a. Método IQR
 print("\n  ── Método IQR (1.5 × IQR) ──")
 print(f"  {'Var':<9} {'Q1':>7} {'Q3':>7} {'IQR':>7} {'Límite':>8} {'Outliers':>8} {'%':>6}")
@@ -114,6 +123,7 @@ for c in COLS:
     iqr_res[c] = {"q1": q1, "q3": q3, "iqr": iqr, "limite": limite, "n": n_out}
     print(f"  {CORTO[c]:<9} {q1:>7.0f} {q3:>7.0f} {iqr:>7.0f} {limite:>8.0f} {n_out:>8,} {n_out/len(v)*100:>5.1f}%")
 
+# %%
 # 3b. Winsorización (5%-95%)
 print("\n  ── Winsorización (P5 – P95) ──")
 print(f"  {'Var':<9} {'Media':>8} {'→ Win':>8} {'Std':>8} {'→ Win':>8} {'Afect':>7}")
@@ -128,6 +138,7 @@ for c in COLS:
                   "orig_s": v.std(), "win_s": w.std(), "n": n_af}
     print(f"  {CORTO[c]:<9} {v.mean():>8.1f} {w.mean():>8.1f} {v.std():>8.1f} {w.std():>8.1f} {n_af:>7,}")
 
+# %%
 # Comparativa
 print("\n  ── Comparativa ──")
 print(f"  {'Var':<9} {'IQR':>8} {'Winsor':>8}")
@@ -136,6 +147,7 @@ for c in COLS:
 print("  → IQR es más estricto en todas las variables.")
 
 
+# %%
 # ================================================================
 # 4. MÉTRICAS DESCRIPTIVAS
 # ================================================================
@@ -164,6 +176,7 @@ cm["Total"] = cm.sum(axis=1)
 print(cm.sort_values("Total", ascending=False))
 
 
+# %%
 # ================================================================
 # 5. GRÁFICOS
 # ================================================================
@@ -173,6 +186,7 @@ print("=" * 60)
 
 colores_box = [CYAN, PINK, PURPLE, GREEN, ORANGE, YELLOW]
 
+# %%
 # ── Fig 1: Box Plots ──
 fig, axes = plt.subplots(2, 3, figsize=(16, 9))
 fig.suptitle("Diagramas de Caja", fontsize=16, fontweight="bold")
@@ -189,6 +203,7 @@ for i, c in enumerate(COLS):
 plt.tight_layout()
 guardar(fig, "fig1_boxplots.png")
 
+# %%
 # ── Fig 2: Dispersión H vs M ──
 fig, ax = plt.subplots(figsize=(10, 8))
 fig.suptitle("Dispersión: Matriculados Hombres vs Mujeres", fontsize=14, fontweight="bold")
@@ -209,6 +224,7 @@ ax.grid(alpha=0.2)
 plt.tight_layout()
 guardar(fig, "fig2_dispersion.png")
 
+# %%
 # ── Fig 3: Barras por Área ──
 fig, ax = plt.subplots(figsize=(12, 7))
 fig.suptitle("Matriculados Promedio por Área", fontsize=14, fontweight="bold")
@@ -225,6 +241,7 @@ ax.grid(axis="x", alpha=0.2)
 plt.tight_layout()
 guardar(fig, "fig3_barras_area.png")
 
+# %%
 # ── Fig 4: Barras por Ciudad ──
 fig, ax = plt.subplots(figsize=(12, 6))
 fig.suptitle("Matriculados Promedio por Departamento", fontsize=14, fontweight="bold")
@@ -240,6 +257,7 @@ ax.grid(axis="x", alpha=0.2)
 plt.tight_layout()
 guardar(fig, "fig4_barras_ciudad.png")
 
+# %%
 # ── Fig 5: Evolución temporal ──
 fig, ax = plt.subplots(figsize=(12, 6))
 fig.suptitle("Evolución de Matrícula Total por Año", fontsize=14, fontweight="bold")
@@ -258,6 +276,7 @@ ax.grid(alpha=0.2)
 plt.tight_layout()
 guardar(fig, "fig5_evolucion.png")
 
+# %%
 # ── Fig 6: IQR vs Winsorización ──
 fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 6))
 fig.suptitle("Comparativa: IQR vs Winsorización", fontsize=14, fontweight="bold")
@@ -279,6 +298,7 @@ ax2.legend(); ax2.grid(axis="y", alpha=0.2)
 plt.tight_layout()
 guardar(fig, "fig6_comparativa_outliers.png")
 
+# %%
 # ── Fig 7: Media vs Mediana ──
 fig, ax = plt.subplots(figsize=(10, 5))
 fig.suptitle("Media vs Mediana (justifica usar mediana para imputar)", fontsize=13, fontweight="bold")
@@ -291,6 +311,7 @@ ax.legend(); ax.grid(axis="y", alpha=0.2)
 plt.tight_layout()
 guardar(fig, "fig7_media_vs_mediana.png")
 
+# %%
 # ── Fig 8: Pública vs Privada ──
 fig, ax = plt.subplots(figsize=(12, 6))
 fig.suptitle("Promedio: Pública vs Privada", fontsize=14, fontweight="bold")
