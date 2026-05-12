@@ -174,6 +174,61 @@ cm = df_work.groupby("CIUDAD")[["MATRICULADOS HOMBRES", "MATRICULADOS MUJERES"]]
 cm.columns = ["Hombres", "Mujeres"]
 cm["Total"] = cm.sum(axis=1)
 print(cm.sort_values("Total", ascending=False))
+# %%
+# ================================================================
+# 5. NORMALIZACIÓN Y ENTANDARIZACIÓN
+# ================================================================
+
+print("""
+- Normalización: Lleva los valores a 0 y 1. Se recomienda para redes neuronales.
+
+- Estandarizacion: Lleva los valores con media 0 y desviación estandar
+de 1. Se recomienda para SVM, arboles de desición, PCA. Esta no se aplica al
+tiempo por que se pierde la relación temporal
+
+Aplicaremos ambos casos por si acaso para en un futuro usar en diferentes casos.
+Usaremos Scikit-Learn, ya que nos permitirá poder realizar el train spit posterior.
+""")
+
+# %%
+print("\n" + "=" * 60)
+print("VARIABLES ESTANDARIZADAS")
+print("=" * 60)
+
+COLS_TO_STANDARDIZE = COLS.copy().remove("AÑO")
+print("Columnas a estandarizar:", COLS_TO_STANDARDIZE)
+scaler_standard_scaler = StandardScaler()
+df_work_standard = df_work.copy()
+df_work_standard[COLS_TO_STANDARDIZE] = scaler_standard_scaler.fit_transform(df_work_standard[COLS])
+
+print("\nMuestra:\n")
+print(df_work_standard[COLS_TO_STANDARDIZE].sample(n=5))
+print("\nDescripción:\n")
+print(df_work_standard[COLS_TO_STANDARDIZE].describe())
+
+# %%
+print("\n" + "=" * 60)
+print("VARIABLES NORMALIZADAS")
+print("=" * 60)
+
+COLS_TO_NORMALIZE = COLS.copy()
+print("Columnas a estandarizar:", COLS_TO_NORMALIZE)
+scaler_min_max_scaler = MinMaxScaler()
+df_work_min_max_scaler = df_work.copy()
+df_work_min_max_scaler[COLS_TO_NORMALIZE] = scaler_min_max_scaler.fit_transform(df_work_min_max_scaler[COLS])
+
+print("\nMuestra:\n")
+print(df_work_min_max_scaler[COLS_TO_NORMALIZE].sample(n=5))
+print("\nDescripción:\n")
+print(df_work_min_max_scaler[COLS_TO_NORMALIZE].describe())
+
+# %%
+
+print("""
+En función de los modelos escogidos posteriormente se podrá decidir por
+una de las dos transformaciones.
+""")
+
 
 
 # %%
