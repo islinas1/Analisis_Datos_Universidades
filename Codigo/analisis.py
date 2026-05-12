@@ -4,6 +4,7 @@ import numpy as np
 from scipy import stats
 import matplotlib.pyplot as plt
 import os
+from sklearn.preprocessing import StandardScaler, MinMaxScaler
 
 # %%
 plt.style.use("dark_background")
@@ -229,6 +230,42 @@ En función de los modelos escogidos posteriormente se podrá decidir por
 una de las dos transformaciones.
 """)
 
+# %%
+# ================================================================
+# 6. CONVERSIÓN DE TIPOS DE DATOS
+# ================================================================
+
+print("""
+Para ello vemos que las columnas que se pueden cambiar de tipo son:
+  'ÁREA', 'CARRERA', 'CIUDAD', 'AÑO', 'TIPO DE EDUCACIÓN'
+""")
+
+print("Viendo de que tipo son las columnas:")
+print(df_work[["ÁREA", "CARRERA", "CIUDAD", "AÑO", "TIPO DE EDUCACIÓN"]].dtypes)
+
+print("Creando copia de seguridad")
+df_change_type = df_work.copy()
+
+# %%
+CATEGORICAL_COLS = ["ÁREA", "CARRERA", "CIUDAD", "TIPO DE EDUCACIÓN"]
+print(f"Convirtiendo {CATEGORICAL_COLS} a categórica")
+df_change_type[CATEGORICAL_COLS] = df_change_type[CATEGORICAL_COLS].astype("category")
+
+# %%
+print("""
+No es posible convertir el año a pd.date_time por que no se tiene ni meses ni dias.
+Los caminos que se recomiendas depende del enfoque que le daremos:
+    - Serie de tiempo: Se puede estandarizar
+    - Sin enfoque temporal: Se puede tratar como una variable categórica
+""")
+# TIME_COLS = ["AÑO"]
+# print(f"Convirtiendo {TIME_COLS} a tiempo")
+# df_change_type[TIME_COLS] = pd.to_datetime(df_change_type[TIME_COLS], format="%Y")
+df_change_type["AÑO"] = df_change_type["AÑO"].astype("category")
+
+# %%
+print("Viendo de que tipo son las columnas:")
+print(df_change_type[["ÁREA", "CARRERA", "CIUDAD", "AÑO", "TIPO DE EDUCACIÓN"]].dtypes)
 
 
 # %%
