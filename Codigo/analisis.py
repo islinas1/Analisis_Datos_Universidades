@@ -68,84 +68,305 @@ print(f"  Tipo: {list(df['TIPO DE EDUCACIÓN'].unique())}")
 # ================================================================
 # 2. DATOS FALTANTES
 # ================================================================
+# El dataset no tiene NaN literales, pero las filas donde TODAS
+# las columnas numéricas valen 0 representan registros sin datos
+# reportados (carrera sin actividad ese año).  Se detectan,
+# se convierten a NaN y se imputan con la mediana por grupo
+# (ÁREA × TIPO DE EDUCACIÓN) para respetar el contexto de cada
+# carrera en vez de usar una mediana global.
+# ================================================================
 print("\n" + "=" * 60)
 print("2. DATOS FALTANTES")
 print("=" * 60)
 
-# Filas con todo en cero = sin datos reportados → NaN
+# %%
+# ── 2a. Diagnóstico: NaN literales ──────────────────────────────
+nan_lit = df[COLS].isna().sum()
+print("\n  NaN literales por columna:")
+for c in COLS:
+    print(f"    {CORTO[c]:<8} {nan_lit[c]:>6,}")
+print(f"  Total NaN literales: {nan_lit.sum()}")
+
+# ── 2b. Diagnóstico: filas «todo-cero» ──────────────────────────
+# Un registro con todos los valores en 0 no aporta información;
+# tratarlos como NaN permite imputarlos correctamente.
 todo_cero = df[COLS].sum(axis=1) == 0
-print(f"  Filas sin datos (todos ceros): {todo_cero.sum():,} ({todo_cero.mean()*100:.1f}%)")
+print(f"\n  Filas sin datos (todos ceros): {todo_cero.sum():,}  "
+      f"({todo_cero.mean()*100:.1f}% del total)")
+print(f"  Filas con al menos un valor  : {(~todo_cero).sum():,}")
 
 df_work = df.copy()
 for c in COLS:
     df_work.loc[todo_cero, c] = np.nan
 
 # %%
-# Resumen antes de imputar
-print(f"\n  {'Variable':<12} {'Faltantes':>9} {'Media':>9} {'Mediana':>9}")
-print(f"  {'-'*12} {'-'*9} {'-'*9} {'-'*9}")
-for c in COLS:
-    na = df_work[c].isna().sum()
-    me = df_work[c].mean()
-    md = df_work[c].median()
-    print(f"  {CORTO[c]:<12} {na:>9,} {me:>9.1f} {md:>9.1f}")
 
-# %%
-# Imputar con mediana por grupo
+    # ── 2c. Tabla resumen antes de imputar ──────────────────────────
+# La diferencia entre media y mediana revela distribuciones muy
+# asimétricas (skew > 3 en todas las variables), lo que justifica
+# usar la mediana como imputador en lugar de la media.
+print(f"\n  {'Variable':<12} {'Faltantes':>10} {'% total':>8} "
+      f"{'Media':>9} {'Mediana':>9} {'Diferencia%':>12}")
+print(f"  {'-'*12} {'-'*10} {'-'*8} {'-'*9} {'-'*9} {'-'*12}")
 for c in COLS:
-    mediana_grupo = df_work.groupby(["ÁREA", "TIPO DE EDUCACIÓN"])[c].transform("median")
+    na  = df_work[c].isna().sum()
+    pct = na / len(df_work) * 100
+    me  = df_work[c].mean()
+    md  = df_work[c].median()
+    dif = (me - md) / md * 100 if md != 0 else 0
+    print(f"  {CORTO[c]:<12} {na:>10,} {pct:>7.1f}% "
+          f"{me:>9.1f} {md:>9.1f} {dif:>+11.1f}%")
+
+# ── 2d. Imputación con mediana por grupo ────────────────────────
+# Estrategia de dos pasos:
+#   1) Mediana del grupo ÁREA × TIPO DE EDUCACIÓN  →  respeta
+#      el perfil típico de cada área y tipo de universidad.
+#   2) Mediana global de la columna  →  fallback para grupos
+#      que también quedaron sin datos.
+for c in COLS:
+    mediana_grupo = df_work.groupby(
+        ["ÁREA", "TIPO DE EDUCACIÓN"])[c].transform("median")
     df_work[c] = df_work[c].fillna(mediana_grupo).fillna(df_work[c].median())
 
-print(f"\n  Método: mediana por grupo (ÁREA + TIPO DE EDUCACIÓN)")
-print(f"  NaN restantes: {df_work[COLS].isna().sum().sum()}")
+print(f"\n  Método : mediana por grupo (ÁREA + TIPO DE EDUCACIÓN)")
+print(f"  NaN restantes tras imputar: {df_work[COLS].isna().sum().sum()}")
 
+# %%
+# ── 2e. Gráfico: patrón de faltantes + media vs mediana ─────────
+fig, axes = plt.subplots(1, 2, figsize=(14, 5))
+fig.suptitle("2. Datos Faltantes", fontsize=15, fontweight="bold")
+
+# Izquierda — barras de faltantes por variable
+ax = axes[0]
+colores_na = [CYAN, PINK, PURPLE, GREEN, ORANGE, YELLOW]
+na_counts  = [df[COLS].isna().sum()[c] + todo_cero.sum() for c in COLS]
+# (NaN literales + filas todo-cero convertidas)
+na_real = [df_work.isna().sum()[c] + 0 for c in COLS]   # después de marcar
+bars = ax.bar([CORTO[c] for c in COLS], [todo_cero.sum()] * len(COLS),
+              color=colores_na, alpha=0.0)               # placeholder altura
+# recalcular con la copia marcada
+na_vals = []
+df_tmp = df.copy()
+for c in COLS:
+    df_tmp.loc[todo_cero, c] = np.nan
+    na_vals.append(df_tmp[c].isna().sum())
+ax.cla()
+bars = ax.bar([CORTO[c] for c in COLS], na_vals,
+              color=colores_na, edgecolor="white", linewidth=0.6)
+for b, v in zip(bars, na_vals):
+    ax.text(b.get_x() + b.get_width() / 2, b.get_height() + 8,
+            f"{v:,}", ha="center", va="bottom", fontsize=9, fontweight="bold")
+ax.set_title("Valores faltantes por variable\n(filas todo-cero → NaN)", fontsize=11)
+ax.set_ylabel("Registros sin dato")
+ax.grid(axis="y", alpha=0.25)
+
+# Derecha — media vs mediana (justificación del imputador)
+ax2 = axes[1]
+x  = np.arange(len(COLS))
+medias   = [df_work[c].mean()   for c in COLS]
+medianas = [df_work[c].median() for c in COLS]
+ax2.bar(x - 0.18, medias,   0.35, label="Media",   color=PINK,  alpha=0.85)
+ax2.bar(x + 0.18, medianas, 0.35, label="Mediana", color=CYAN, alpha=0.85)
+ax2.set_xticks(x)
+ax2.set_xticklabels([CORTO[c] for c in COLS])
+ax2.set_title("Media vs Mediana\n(asimetría justifica usar mediana)", fontsize=11)
+ax2.set_ylabel("Promedio de estudiantes")
+ax2.legend()
+ax2.grid(axis="y", alpha=0.25)
+
+plt.tight_layout()
+guardar(fig, "fig_datos_faltantes.png")
 
 # %%
 # ================================================================
-# 3. OUTLIERS
+# 3. DETECCIÓN Y TRATAMIENTO DE OUTLIERS
+# ================================================================
+# IMPORTANTE — distinción conceptual:
+#
+#   DETECCIÓN  → identificar qué valores son atípicos.
+#                Herramienta usada: regla IQR (Q3 + 1.5 × IQR).
+#
+#   TRATAMIENTO → decidir qué hacer con los outliers detectados.
+#                 Se comparan dos estrategias:
+#                   A) Eliminación  — borrar las filas con outliers.
+#                   B) Winsorización — reemplazar los extremos por
+#                      los valores de los percentiles P5 y P95,
+#                      conservando todas las filas.
+#
+# Comparar IQR con Winsorización como si fueran del mismo tipo
+# es un error: el IQR es una regla de DETECCIÓN, mientras que
+# eliminación y winsorización son estrategias de TRATAMIENTO.
+# La comparación correcta es: Eliminación vs. Winsorización.
 # ================================================================
 print("\n" + "=" * 60)
-print("3. DETECCIÓN DE OUTLIERS")
+print("3. DETECCIÓN Y TRATAMIENTO DE OUTLIERS")
 print("=" * 60)
 
-# %%
-# 3a. Método IQR
-print("\n  ── Método IQR (1.5 × IQR) ──")
-print(f"  {'Var':<9} {'Q1':>7} {'Q3':>7} {'IQR':>7} {'Límite':>8} {'Outliers':>8} {'%':>6}")
-print(f"  {'-'*9} {'-'*7} {'-'*7} {'-'*7} {'-'*8} {'-'*8} {'-'*6}")
+# ── 3a. DETECCIÓN: Regla IQR ────────────────────────────────────
+# Se identifican como outliers los valores que superan Q3 + 1.5×IQR
+# (extremo superior).  Solo se consideran registros con valor > 0.
+print("\n  [DETECCIÓN] Regla IQR — Q3 + 1.5 × IQR")
+print(f"  {'Var':<9} {'Q1':>7} {'Q3':>7} {'IQR':>7} "
+      f"{'Lím.sup':>9} {'Outliers':>9} {'%':>6}")
+print(f"  {'-'*9} {'-'*7} {'-'*7} {'-'*7} {'-'*9} {'-'*9} {'-'*6}")
 
 iqr_res = {}
 for c in COLS:
-    v = df_work[c][df_work[c] > 0]
+    v      = df_work[c][df_work[c] > 0]
     q1, q3 = v.quantile(0.25), v.quantile(0.75)
-    iqr = q3 - q1
+    iqr    = q3 - q1
     limite = q3 + 1.5 * iqr
-    n_out = (v > limite).sum()
+    n_out  = (v > limite).sum()
     iqr_res[c] = {"q1": q1, "q3": q3, "iqr": iqr, "limite": limite, "n": n_out}
-    print(f"  {CORTO[c]:<9} {q1:>7.0f} {q3:>7.0f} {iqr:>7.0f} {limite:>8.0f} {n_out:>8,} {n_out/len(v)*100:>5.1f}%")
+    print(f"  {CORTO[c]:<9} {q1:>7.0f} {q3:>7.0f} {iqr:>7.0f} "
+          f"{limite:>9.0f} {n_out:>9,} {n_out/len(v)*100:>5.1f}%")
 
-# %%
-# 3b. Winsorización (5%-95%)
-print("\n  ── Winsorización (P5 – P95) ──")
-print(f"  {'Var':<9} {'Media':>8} {'→ Win':>8} {'Std':>8} {'→ Win':>8} {'Afect':>7}")
-print(f"  {'-'*9} {'-'*8} {'-'*8} {'-'*8} {'-'*8} {'-'*7}")
+# ── 3b. TRATAMIENTO A: Eliminación ──────────────────────────────
+# Se eliminan las filas donde AL MENOS UNA columna supera su
+# límite IQR.  Ventaja: elimina el ruido.
+# Desventaja: se pierde información — reducción del dataset.
+mask_outlier = pd.Series(False, index=df_work.index)
+for c in COLS:
+    mask_outlier |= (df_work[c] > iqr_res[c]["limite"])
+
+df_elim = df_work[~mask_outlier].copy()
+filas_elim = mask_outlier.sum()
+
+print(f"\n  [TRATAMIENTO A] Eliminación de filas con outlier IQR")
+print(f"  Filas eliminadas : {filas_elim:,} ({filas_elim/len(df_work)*100:.1f}%)")
+print(f"  Filas restantes  : {len(df_elim):,}")
+print(f"\n  {'Var':<9} {'Media orig':>11} {'→ Elim':>9} "
+      f"{'Std orig':>10} {'→ Elim':>9} {'Red.Std%':>9}")
+print(f"  {'-'*9} {'-'*11} {'-'*9} {'-'*10} {'-'*9} {'-'*9}")
+elim_res = {}
+for c in COLS:
+    orig_m = df_work[c][df_work[c] > 0].mean()
+    orig_s = df_work[c][df_work[c] > 0].std()
+    new_m  = df_elim[c][df_elim[c] > 0].mean()
+    new_s  = df_elim[c][df_elim[c] > 0].std()
+    red    = (orig_s - new_s) / orig_s * 100
+    elim_res[c] = {"orig_m": orig_m, "new_m": new_m,
+                   "orig_s": orig_s, "new_s": new_s, "red": red}
+    print(f"  {CORTO[c]:<9} {orig_m:>11.1f} {new_m:>9.1f} "
+          f"{orig_s:>10.1f} {new_s:>9.1f} {red:>8.1f}%")
+
+# ── 3c. TRATAMIENTO B: Winsorización (P5–P95) ───────────────────
+# Los valores extremos se recortan al P5 (inferior) y al P95
+# (superior), reemplazándolos por esos percentiles.
+# Ventaja: no se pierde ninguna fila.
+# Desventaja: modifica los valores originales.
+print(f"\n  [TRATAMIENTO B] Winsorización P5–P95")
+print(f"  {'Var':<9} {'Media orig':>11} {'→ Win':>9} "
+      f"{'Std orig':>10} {'→ Win':>9} {'Afect.':>8} {'Red.Std%':>9}")
+print(f"  {'-'*9} {'-'*11} {'-'*9} {'-'*10} {'-'*9} {'-'*8} {'-'*9}")
 
 win_res = {}
 for c in COLS:
-    v = df_work[c][df_work[c] > 0]
-    w = stats.mstats.winsorize(v, limits=[0.05, 0.05])
+    v    = df_work[c][df_work[c] > 0]
+    w    = stats.mstats.winsorize(v, limits=[0.05, 0.05])
     n_af = int(((v < np.percentile(v, 5)) | (v > np.percentile(v, 95))).sum())
-    win_res[c] = {"orig_m": v.mean(), "win_m": w.mean(),
-                  "orig_s": v.std(), "win_s": w.std(), "n": n_af}
-    print(f"  {CORTO[c]:<9} {v.mean():>8.1f} {w.mean():>8.1f} {v.std():>8.1f} {w.std():>8.1f} {n_af:>7,}")
+    red  = (v.std() - float(w.std())) / v.std() * 100
+    win_res[c] = {"orig_m": v.mean(), "win_m": float(w.mean()),
+                  "orig_s": v.std(),  "win_s": float(w.std()),
+                  "n": n_af, "red": red}
+    print(f"  {CORTO[c]:<9} {v.mean():>11.1f} {float(w.mean()):>9.1f} "
+          f"{v.std():>10.1f} {float(w.std()):>9.1f} {n_af:>8,} {red:>8.1f}%")
 
-# %%
-# Comparativa
-print("\n  ── Comparativa ──")
-print(f"  {'Var':<9} {'IQR':>8} {'Winsor':>8}")
+# ── 3d. COMPARATIVA: Eliminación vs. Winsorización ──────────────
+# Ahora sí comparamos dos estrategias de TRATAMIENTO entre sí.
+print(f"\n  [COMPARATIVA] Eliminación vs. Winsorización")
+print(f"  (ambas usan IQR como criterio de detección)")
+print(f"  {'Var':<9} {'Red.Std Elim%':>14} {'Red.Std Win%':>13}  "
+      f"{'Filas perdidas':>15}")
+print(f"  {'-'*9} {'-'*14} {'-'*13}  {'-'*15}")
 for c in COLS:
-    print(f"  {CORTO[c]:<9} {iqr_res[c]['n']:>8,} {win_res[c]['n']:>8,}")
-print("  → IQR es más estricto en todas las variables.")
+    print(f"  {CORTO[c]:<9} {elim_res[c]['red']:>13.1f}% "
+          f"{win_res[c]['red']:>12.1f}%  "
+          f"{filas_elim:>12,} vs 0")
+print(f"\n  → Eliminación reduce más la Std pero descarta "
+      f"{filas_elim:,} filas ({filas_elim/len(df_work)*100:.1f}%).")
+print(f"  → Winsorización conserva todas las filas a cambio de")
+print(f"    modificar los valores extremos.")
+print(f"  → En este dataset se prefiere Winsorización para no")
+print(f"    perder información de carreras con matrículas altas.")
+
+# ── 3e. Gráfico: Box plots (detección IQR) ──────────────────────
+fig, axes = plt.subplots(2, 3, figsize=(16, 9))
+fig.suptitle("3a. Detección de Outliers con Regla IQR",
+             fontsize=16, fontweight="bold")
+colores_box = [CYAN, PINK, PURPLE, GREEN, ORANGE, YELLOW]
+for i, c in enumerate(COLS):
+    ax   = axes[i // 3][i % 3]
+    data = df_work[c][df_work[c] > 0]
+    ax.boxplot(
+        data, patch_artist=True, widths=0.5,
+        boxprops    =dict(facecolor=colores_box[i] + "40",
+                          edgecolor=colores_box[i], linewidth=1.5),
+        medianprops =dict(color=PINK, linewidth=2.5),
+        whiskerprops=dict(color=colores_box[i], linewidth=1.2),
+        capprops    =dict(color=colores_box[i], linewidth=1.5),
+        flierprops  =dict(marker=".", color=RED, markersize=2, alpha=0.3),
+    )
+    ax.set_title(CORTO[c], color=colores_box[i], fontweight="bold")
+    ax.set_xlabel(
+        f"Outliers detectados: {iqr_res[c]['n']:,}  |  "
+        f"Límite sup.: {iqr_res[c]['limite']:.0f}",
+        fontsize=8, color=RED,
+    )
+    ax.set_xticks([])
+    ax.set_ylabel("Cantidad de estudiantes")
+    ax.grid(alpha=0.2)
+plt.tight_layout()
+guardar(fig, "fig_outliers_deteccion_iqr.png")
+
+# ── 3f. Gráfico: Eliminación vs. Winsorización ──────────────────
+fig, axes = plt.subplots(1, 3, figsize=(18, 6))
+fig.suptitle(
+    "3b. Tratamiento de Outliers — Eliminación vs. Winsorización\n"
+    "(detección previa con regla IQR en ambos casos)",
+    fontsize=13, fontweight="bold",
+)
+labels = [CORTO[c] for c in COLS]
+x = np.arange(len(labels))
+
+# Panel izquierdo — reducción de Std
+ax = axes[0]
+ax.bar(x - 0.18, [elim_res[c]["red"] for c in COLS], 0.35,
+       label="Eliminación", color=RED,   alpha=0.85)
+ax.bar(x + 0.18, [win_res[c]["red"]  for c in COLS], 0.35,
+       label="Winsorización", color=GREEN, alpha=0.85)
+ax.set_xticks(x); ax.set_xticklabels(labels, rotation=15)
+ax.set_title("Reducción de Desv. Estándar (%)", fontsize=11)
+ax.set_ylabel("Reducción (%)")
+ax.legend(); ax.grid(axis="y", alpha=0.2)
+
+# Panel central — media antes/después por tratamiento
+ax2 = axes[1]
+medias_orig = [df_work[c][df_work[c] > 0].mean() for c in COLS]
+medias_elim = [elim_res[c]["new_m"] for c in COLS]
+medias_win  = [win_res[c]["win_m"]  for c in COLS]
+ax2.bar(x - 0.25, medias_orig, 0.24, label="Original",     color=BLUE,   alpha=0.85)
+ax2.bar(x,        medias_elim, 0.24, label="Eliminación",  color=RED,    alpha=0.85)
+ax2.bar(x + 0.25, medias_win,  0.24, label="Winsorización",color=GREEN,  alpha=0.85)
+ax2.set_xticks(x); ax2.set_xticklabels(labels, rotation=15)
+ax2.set_title("Media original vs. tras tratamiento", fontsize=11)
+ax2.set_ylabel("Media de estudiantes")
+ax2.legend(); ax2.grid(axis="y", alpha=0.2)
+
+# Panel derecho — costo: filas perdidas vs. filas modificadas
+ax3 = axes[2]
+filas_mod_win = [win_res[c]["n"] for c in COLS]
+ax3.bar(x - 0.18, [filas_elim] * len(COLS), 0.35,
+        label=f"Filas eliminadas ({filas_elim:,})", color=RED,    alpha=0.85)
+ax3.bar(x + 0.18, filas_mod_win,              0.35,
+        label="Filas modificadas (win)",           color=ORANGE, alpha=0.85)
+ax3.set_xticks(x); ax3.set_xticklabels(labels, rotation=15)
+ax3.set_title("Costo de cada tratamiento\n(filas perdidas vs. modificadas)", fontsize=11)
+ax3.set_ylabel("Cantidad de filas")
+ax3.legend(fontsize=8); ax3.grid(axis="y", alpha=0.2)
+
+plt.tight_layout()
+guardar(fig, "fig_outliers_tratamiento_comparativa.png")
 
 
 # %%
@@ -196,7 +417,7 @@ print("\n" + "=" * 60)
 print("VARIABLES ESTANDARIZADAS")
 print("=" * 60)
 
-COLS_TO_STANDARDIZE = COLS.copy().remove("AÑO")
+COLS_TO_STANDARDIZE = COLS.copy()
 print("Columnas a estandarizar:", COLS_TO_STANDARDIZE)
 scaler_standard_scaler = StandardScaler()
 df_work_standard = df_work.copy()
