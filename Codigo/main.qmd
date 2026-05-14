@@ -363,6 +363,7 @@ print(f"  NaN restantes tras imputar: {df_work[COLS].isna().sum().sum()}")
 :::
 
 ```{python}
+#| echo: false
 fig, axes = plt.subplots(1, 2, figsize=(14, 5))
 fig.suptitle("2. Datos Faltantes", fontsize=15, fontweight="bold")
 
@@ -545,6 +546,7 @@ En este dataset se prefiere Winsorización para no perder información de carrer
 Viendo una gráfica
 
 ```{python}
+#| echo: false
 fig, axes = plt.subplots(2, 3, figsize=(16, 9))
 fig.suptitle("3a. Detección de Outliers con Regla IQR",
              fontsize=16, fontweight="bold")
@@ -582,6 +584,7 @@ guardar(fig, "fig_outliers_deteccion_iqr.png")
 Segunda visualización
 
 ```{python}
+#| echo: false
 fig, axes = plt.subplots(1, 3, figsize=(18, 6))
 fig.suptitle(
     "3b. Tratamiento de Outliers — Eliminación vs. Winsorización\n"
@@ -783,6 +786,7 @@ print(df_change_type[["ÁREA", "CARRERA", "CIUDAD",
 :::
 
 ```{python}
+#| echo: false
 fig, axes = plt.subplots(2, 3, figsize=(16, 9))
 fig.suptitle("Diagramas de Caja", fontsize=16, fontweight="bold")
 for i, c in enumerate(COLS):
@@ -806,6 +810,7 @@ guardar(fig, "fig1_boxplots.png")
 :::
 
 ```{python}
+#| echo: false
 fig, axes = plt.subplots(1, 3, figsize=(18, 6))
 fig.suptitle(
     "3b. Tratamiento de Outliers — Eliminación vs. Winsorización\n"
@@ -871,6 +876,7 @@ guardar(fig, "fig_outliers_tratamiento_comparativa.png")
 :::
 
 ```{python}
+#| echo: false
 fig, ax = plt.subplots(figsize=(12, 7))
 fig.suptitle("Matriculados Promedio por Área", fontsize=14, fontweight="bold")
 am = df_work.groupby(
@@ -897,6 +903,7 @@ guardar(fig, "fig3_barras_area.png")
 
 
 ```{python}
+#| echo: false
 fig, ax = plt.subplots(figsize=(12, 6))
 fig.suptitle("Matriculados Promedio por Departamento",
              fontsize=14, fontweight="bold")
@@ -923,6 +930,7 @@ guardar(fig, "fig4_barras_ciudad.png")
 
 
 ```{python}
+#| echo: false
 fig, ax = plt.subplots(figsize=(12, 6))
 fig.suptitle("Evolución de Matrícula Total por Año",
              fontsize=14, fontweight="bold")
@@ -985,6 +993,7 @@ guardar(fig, "fig6_comparativa_outliers.png")
 :::
 
 ```{python}
+#| echo: false
 fig, ax = plt.subplots(figsize=(10, 5))
 fig.suptitle("Media vs Mediana (justifica usar mediana para imputar)",
              fontsize=13, fontweight="bold")
@@ -1006,6 +1015,7 @@ guardar(fig, "fig7_media_vs_mediana.png")
 :::
 
 ```{python}
+#| echo: false
 fig, ax = plt.subplots(figsize=(10, 5))
 fig.suptitle("Media vs Mediana (justifica usar mediana para imputar)",
              fontsize=13, fontweight="bold")
@@ -1027,6 +1037,7 @@ guardar(fig, "fig7_media_vs_mediana.png")
 :::
 
 ```{python}
+#| echo: false
 fig, ax = plt.subplots(figsize=(12, 6))
 fig.suptitle("Promedio: Pública vs Privada", fontsize=14, fontweight="bold")
 tm = df_work.groupby("TIPO DE EDUCACIÓN")[COLS].mean()
