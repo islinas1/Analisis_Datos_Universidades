@@ -32,19 +32,28 @@ execute:
 
 El sistema de educación superior en Bolivia atraviesa un momento de transición crítica, donde la masificación de la matrícula no siempre se traduce en una reducción efectiva de las brechas sociales y económicas. En un entorno globalizado que demanda competencias técnicas de alto nivel, la universidad boliviana se enfrenta al desafío de ser un motor de movilidad social en un mercado laboral marcado por la informalidad. Sin embargo, para entender hacia dónde debe dirigirse la política educativa, es imperativo analizar primero de dónde venimos y cómo se comportan nuestros datos académicos actuales.
 
----
+::: {.content-visible when-format="revealjs"}
+##
+:::
 
 El presente estudio surge de la necesidad de transformar los registros históricos de matrículas y titulaciones en conocimiento estratégico. No basta con saber cuántos estudiantes ingresan al sistema; es fundamental identificar quiénes son, qué estudian, en qué departamentos se concentran y si el género sigue siendo un factor determinante en su trayectoria académica. Esta investigación propone un análisis descriptivo y prospectivo que permite visualizar las asimetrías del sistema universitario nacional, ofreciendo una base cuantitativa para la toma de decisiones.
 
----
+::: {.content-visible when-format="revealjs"}
+##
+:::
 
 Para garantizar la rigurosidad de este análisis, se ha adoptado la metodología CRISP-DM (Cross-Industry Standard Process for Data Mining), un estándar internacional que permite estructurar el ciclo de vida de los datos desde la comprensión del problema institucional hasta la generación de modelos de tendencia. A través de este enfoque, el informe desglosa la realidad educativa boliviana, evaluando la "macrocefalia" académica en el eje troncal y la persistencia de segregaciones que limitan el potencial del capital humano en el país.
 
----
+::: {.content-visible when-format="revealjs"}
+##
+:::
+
 
 A continuación, se detalla el marco contextual y la problemática que motivan este análisis, estableciendo los objetivos y la hoja de ruta metodológica que guiarán el desarrollo de la investigación.
 
----
+::: {.content-visible when-format="revealjs"}
+##
+:::
 
 # Contextualización y Definición del Problema
 
@@ -65,9 +74,29 @@ A pesar de los esfuerzos por masificar la educación superior en Bolivia, persis
 ### Problemas secundarios
 
 -   **Desconocimiento del ritmo de expansión**: No se tiene una medición precisa de la tasa de crecimiento anual de la matrícula, lo que impide determinar si el sistema universitario boliviano está en una fase de expansión sostenible o de estancamiento.
+
+::: {.content-visible when-format="revealjs"}
+##
+:::
+
 -   **Segregación de género persistente**: Existe una brecha invisible en la elección de carreras y tasas de titulación entre hombres y mujeres, lo que sugiere que el acceso no es equitativo en todas las áreas del conocimiento (especialmente en sectores técnicos o de servicios).
+
+::: {.content-visible when-format="revealjs"}
+##
+:::
+
 -   **Macrocefalia académica departamental**: La oferta y demanda educativa parecen estar altamente concentradas en el \"eje troncal\", dejando a los departamentos periféricos en una situación de desventaja competitiva y limitando la democratización del acceso profesional.
+
+::: {.content-visible when-format="revealjs"}
+##
+:::
+
 -   **Desconexión entre formación y estructura económica**: Se observa una posible asimetría entre las áreas de estudio con mayor volumen de matriculados y las necesidades de un mercado laboral marcado por la informalidad, lo que podría generar una saturación en sectores de baja productividad.
+
+::: {.content-visible when-format="revealjs"}
+##
+:::
+
 -   **Incertidumbre prospectiva**: La ausencia de proyecciones basadas en datos históricos dificulta la planificación estratégica de las instituciones educativas para anticipar la demanda futura de infraestructura y recursos docentes.
 
 ## Objetivos
@@ -79,9 +108,29 @@ Analizar la evolución temporal del crecimiento y las desigualdades de género e
 ### Objetivos Específicos
 
 -   **Cuantificar la evolución de la matrícula:** Identificar las tasas de crecimiento anual de inscritos en el sistema universitario boliviano durante el periodo de estudio.
+
+::: {.content-visible when-format="revealjs"}
+##
+:::
+
 -   **Identificar brechas de género:** Comparar la distribución de hombres y mujeres en las distintas áreas del conocimiento y niveles de titulación.
+
+::: {.content-visible when-format="revealjs"}
+##
+:::
+
 -   **Analizar la concentración geográfica:** Determinar qué departamentos o ciudades concentran la mayor oferta y demanda académica, contrastándola con las zonas de menor acceso.
+
+::: {.content-visible when-format="revealjs"}
+##
+:::
+
 -   **Evaluar la relación entre oferta y formalidad:** Explorar descriptivamente si las áreas de estudio con mayor crecimiento coinciden con los sectores económicos de mayor informalidad en el país.
+
+::: {.content-visible when-format="revealjs"}
+##
+:::
+
 -   **Proyectar tendencias futuras:** Aplicar modelos descriptivos para estimar el comportamiento de la matrícula en los próximos años basándose en los datos históricos.
 
 ## Justificación y alcance
@@ -90,14 +139,53 @@ Analizar la evolución temporal del crecimiento y las desigualdades de género e
 
 Para el análisis de los datos se usará lo que es la metodologia CRISP-DM que es un acrónimo de de Cross-Industry Standard Process for Data Mining. Este es un modelo de proceso estándar, ampliamente reconocido y utilizado en la industria, que describe los pasos necesarios para llevar a cabo con éxito un proyecto de minería de datos o de análisis de datos. Este marco de trabajo proporciona una estructura iterativa y cíclica que organiza el flujo de trabajo en las siguientes seis fases:
 
+::: {.content-visible when-format="revealjs"}
+##
+:::
+
 1.  **Comprensión del Negocio (Business Understanding)**: Esta fase inicial se centra en la definición de los objetivos del proyecto y los requisitos desde una perspectiva de negocio o la institución.
+
+::: {.content-visible when-format="revealjs"}
+##
+:::
+
 2.  **Comprensión de los Datos (Data Understanding)**: Consiste en la recolección inicial de datos y la realización de actividades destinadas a familiarizarse con ellos.
+
+::: {.content-visible when-format="revealjs"}
+##
+:::
+
 3.  **Preparación de los Datos (Data Preparation)**: Esta etapa abarca todas las actividades necesarias para construir el conjunto de datos final que será introducido en las herramientas de modelado.
+
+::: {.content-visible when-format="revealjs"}
+##
+:::
+
 4.  **Modelado (Modeling)**: En esta fase se seleccionan y aplican diversas técnicas de modelado y se calibran sus parámetros a valores óptimos. Debido a que algunas técnicas requieren formatos de datos específicos, a menudo es necesario regresar a la fase de preparación de datos durante este proceso.
+
+::: {.content-visible when-format="revealjs"}
+##
+:::
+
 5.  **Evaluación (Evaluation)**: Una vez construido el modelo (o modelos), se debe evaluar su calidad, eficacia y si el modelo cumple con los objetivos definidos en la primera fase y se determina si existe alguna razón importante por la cual el modelo no deba ser utilizado.
 6.  **Despliegue (Deployment)**: Los conocimientos obtenidos deben ser organizados y presentados de manera que el usuario final pueda utilizarlos.
 
 La metodología CRISP-DM destaca por su naturaleza cíclica y su versatilidad, siendo un estándar agnóstico al sector o tecnología empleada. Su valor reside en su capacidad para alinear los requisitos técnicos con las metas estratégicas del negocio. La elección de este marco responde a su robustez y rigor, garantizando que el proceso siga un hilo conductor sistemático ---desde la fase de observación hasta la evaluación final--- sin omitir etapas fundamentales del método científico. Entre sus ventajas adicionales se encuentran:
+::: {.content-visible when-format="revealjs"}
+##
+:::
+
+6.  **Despliegue (Deployment)**: Los conocimientos obtenidos deben ser organizados y presentados de manera que el usuario final pueda utilizarlos
+
+::: {.content-visible when-format="revealjs"}
+##
+:::
+
+La metodología CRISP-DM destaca por su naturaleza cíclica y su versatilidad, siendo un estándar agnóstico al sector o tecnología empleada. Su valor reside en su capacidad para alinear los requisitos técnicos con las metas estratégicas del negocio. La elección de este marco responde a su robustez y rigor, garantizando que el proceso siga un hilo conductor sistemático -
+
+::: {.content-visible when-format="revealjs"}
+##
+:::
 
 -   Replicabilidad y documentación
 -   Naturaleza iterativa y no lineal
@@ -106,9 +194,9 @@ La metodología CRISP-DM destaca por su naturaleza cíclica y su versatilidad, s
 
 # Procedimiento
 
-Importamos las librerias que usaremos:
-
 ## Preparación
+
+Importamos las librerias que usaremos:
 
 ```{python}
 import pandas as pd
@@ -119,7 +207,9 @@ import os
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
 ```
 
----
+::: {.content-visible when-format="revealjs"}
+##
+:::
 
 ```{python}
 #| echo: false
@@ -170,12 +260,20 @@ def guardar(fig, nombre):
     print(f"  ✓ {nombre}")
 ```
 
-Cargamos los datos
 
+::: {.content-visible when-format="revealjs"}
+##
+:::
+
+Cargamos los datos
 
 ```{python}
 df = pd.read_csv(os.path.join(DIR, "universities_bolivia_dataset.csv"))
 ```
+
+::: {.content-visible when-format="revealjs"}
+##
+:::
 
 Veremos algunos datos del dataset
 
@@ -185,6 +283,10 @@ print(f"  Años: {df['AÑO'].min()} – {df['AÑO'].max()}")
 print(f"  Departamentos: {sorted(df['CIUDAD'].unique())}")
 print(f"  Tipo: {list(df['TIPO DE EDUCACIÓN'].unique())}")
 ```
+
+::: {.content-visible when-format="revealjs"}
+##
+:::
 
 # Valores faltantes
 
@@ -197,6 +299,10 @@ for c in COLS:
     print(f"    {CORTO[c]:<8} {nan_lit[c]:>6,}")
 print(f"  Total NaN literales: {nan_lit.sum()}")
 ```
+
+::: {.content-visible when-format="revealjs"}
+##
+:::
 
 
 Haciendo un diagnóstico para ver todas todas la filas con un registro 0. Un registro con todos los valores en 0 no aporta información; tratarlos como NaN permite imputarlos correctamente.
@@ -211,6 +317,10 @@ df_work = df.copy()
 for c in COLS:
     df_work.loc[todo_cero, c] = np.nan
 ```
+
+::: {.content-visible when-format="revealjs"}
+##
+:::
 
 Viendo una tabla de resumen antes de imputar. La diferencia entre media y mediana revela distribuciones muy asimétricas (skew > 3 en todas las variables), lo que justifica usar la mediana como imputador en lugar de la media.
 
@@ -228,6 +338,10 @@ for c in COLS:
           f"{me:>9.1f} {md:>9.1f} {dif:>+11.1f}%")
 ```
 
+::: {.content-visible when-format="revealjs"}
+##
+:::
+
 Ahora se hará una imputación con mediana por grupo. Para ello se seguirán las estratégias de dos pasos:
 
 1) Mediana del grupo ÁREA x TIPO DE EDUCACIÓN -> respeta el perfil típico de cada área y tipo de universidad.
@@ -243,6 +357,10 @@ print(f"\n  Método : mediana por grupo (ÁREA + TIPO DE EDUCACIÓN)")
 print(f"  NaN restantes tras imputar: {df_work[COLS].isna().sum().sum()}")
 
 ```
+
+::: {.content-visible when-format="revealjs"}
+##
+:::
 
 ```{python}
 fig, axes = plt.subplots(1, 2, figsize=(14, 5))
@@ -302,6 +420,11 @@ Se tratarán usando dos estrategias:
 - A) Eliminación  — borrar las filas con outliers.
 - B) Winsorización — reemplazar los extremos por los valores de los percentiles P5 y P95, conservando todas las filas. #
 
+
+::: {.content-visible when-format="revealjs"}
+##
+:::
+
 Comparar IQR con Winsorización como si fueran del mismo tipo es un error: el IQR es una regla de DETECCIÓN, mientras que eliminación y winsorización son estrategias de TRATAMIENTO. La comparación correcta es: Eliminación vs. Winsorización.
 
 Se identifican como outliers los valores que superan Q3 + 1.5×IQR (extremo superior).  Solo se consideran registros con valor > 0.
@@ -325,6 +448,10 @@ for c in COLS:
 
 ```
 
+
+::: {.content-visible when-format="revealjs"}
+##
+:::
 
 Se eliminan las filas donde AL MENOS UNA columna supera su límite IQR.
 
@@ -359,6 +486,11 @@ for c in COLS:
           f"{orig_s:>10.1f} {new_s:>9.1f} {red:>8.1f}%")
 ```
 
+
+::: {.content-visible when-format="revealjs"}
+##
+:::
+
 Los valores extremos se recortan al P5 (inferior) y al P95 (superior), reemplazándolos por esos percentiles.
 - Ventaja: no se pierde ninguna fila.
 - Desventaja: modifica los valores originales.
@@ -382,6 +514,10 @@ for c in COLS:
           f"{v.std():>10.1f} {float(w.std()):>9.1f} {n_af:>8,} {red:>8.1f}%")
 ```
 
+::: {.content-visible when-format="revealjs"}
+##
+:::
+
 
 Ahora sí comparamos dos estrategias de TRATAMIENTO entre sí.
 
@@ -398,6 +534,10 @@ for c in COLS:
 print(f"\n  → Eliminación reduce más la Std pero descarta "
       f"{filas_elim:,} filas ({filas_elim/len(df_work)*100:.1f}%).")
 ```
+
+::: {.content-visible when-format="revealjs"}
+##
+:::
 
 Winsorización conserva todas las filas a cambio de modificar los valores extremos.
 En este dataset se prefiere Winsorización para no perder información de carreras con matrículas altas.
@@ -434,6 +574,10 @@ plt.tight_layout()
 plt.show()
 guardar(fig, "fig_outliers_deteccion_iqr.png")
 ```
+
+::: {.content-visible when-format="revealjs"}
+##
+:::
 
 Segunda visualización
 
@@ -499,6 +643,10 @@ plt.show()
 guardar(fig, "fig_outliers_tratamiento_comparativa.png")
 ```
 
+::: {.content-visible when-format="revealjs"}
+##
+:::
+
 # Metricas descriptivas
 
 ```{python}
@@ -526,11 +674,19 @@ cm["Total"] = cm.sum(axis=1)
 print(cm.sort_values("Total", ascending=False))
 ```
 
-- Normalización: Lleva los valores a 0 y 1. Se recomienda para redes neuronales.
+::: {.content-visible when-format="revealjs"}
+##
+:::
 
+- Normalización: Lleva los valores a 0 y 1. Se recomienda para redes neuronales.
 - Estandarizacion: Lleva los valores con media 0 y desviación estandar
+
 de 1. Se recomienda para SVM, arboles de desición, PCA. Esta no se aplica al
 tiempo por que se pierde la relación temporal
+
+::: {.content-visible when-format="revealjs"}
+##
+:::
 
 Aplicaremos ambos casos por si acaso para en un futuro usar en diferentes casos.
 Usaremos Scikit-Learn, ya que nos permitirá poder realizar el train spit posterior.
@@ -549,6 +705,10 @@ print("\nDescripción:\n")
 print(df_work_standard[COLS_TO_STANDARDIZE].describe())
 ```
 
+::: {.content-visible when-format="revealjs"}
+##
+:::
+
 ```{python}
 
 COLS_TO_NORMALIZE = COLS.copy()
@@ -564,6 +724,9 @@ print("\nDescripción:\n")
 print(df_work_min_max_scaler[COLS_TO_NORMALIZE].describe())
 ```
 
+::: {.content-visible when-format="revealjs"}
+##
+:::
 
 En función de los modelos escogidos posteriormente se podrá decidir por
 una de las dos transformaciones.
@@ -579,12 +742,20 @@ Creando copia de seguridad
 df_change_type = df_work.copy()
 ```
 
+::: {.content-visible when-format="revealjs"}
+##
+:::
+
 ```{python}
 CATEGORICAL_COLS = ["ÁREA", "CARRERA", "CIUDAD", "TIPO DE EDUCACIÓN"]
 print(f"Convirtiendo {CATEGORICAL_COLS} a categórica")
 df_change_type[CATEGORICAL_COLS] = df_change_type[CATEGORICAL_COLS].astype(
     "category")
 ```
+
+::: {.content-visible when-format="revealjs"}
+##
+:::
 
 
 No es posible convertir el año a pd.date_time por que no se tiene ni meses ni dias.
@@ -596,12 +767,20 @@ Los caminos que se recomiendas depende del enfoque que le daremos:
 df_change_type["AÑO"] = df_change_type["AÑO"].astype("category")
 ```
 
+::: {.content-visible when-format="revealjs"}
+##
+:::
+
 Viendo de que tipo son las columnas:
 
 ```{python}
 print(df_change_type[["ÁREA", "CARRERA", "CIUDAD",
       "AÑO", "TIPO DE EDUCACIÓN"]].dtypes)
 ```
+
+::: {.content-visible when-format="revealjs"}
+##
+:::
 
 ```{python}
 fig, axes = plt.subplots(2, 3, figsize=(16, 9))
@@ -621,6 +800,10 @@ plt.tight_layout()
 plt.show()
 guardar(fig, "fig1_boxplots.png")
 ```
+
+::: {.content-visible when-format="revealjs"}
+##
+:::
 
 ```{python}
 fig, axes = plt.subplots(1, 3, figsize=(18, 6))
@@ -683,6 +866,10 @@ plt.show()
 guardar(fig, "fig_outliers_tratamiento_comparativa.png")
 ```
 
+::: {.content-visible when-format="revealjs"}
+##
+:::
+
 ```{python}
 fig, ax = plt.subplots(figsize=(12, 7))
 fig.suptitle("Matriculados Promedio por Área", fontsize=14, fontweight="bold")
@@ -703,6 +890,10 @@ plt.tight_layout()
 plt.show()
 guardar(fig, "fig3_barras_area.png")
 ```
+
+::: {.content-visible when-format="revealjs"}
+##
+:::
 
 
 ```{python}
@@ -725,6 +916,10 @@ plt.tight_layout()
 plt.show()
 guardar(fig, "fig4_barras_ciudad.png")
 ```
+
+::: {.content-visible when-format="revealjs"}
+##
+:::
 
 
 ```{python}
@@ -749,6 +944,10 @@ ax.grid(alpha=0.2)
 plt.tight_layout()
 guardar(fig, "fig5_evolucion.png")
 ```
+
+::: {.content-visible when-format="revealjs"}
+##
+:::
 
 ```{python}
 fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 6))
@@ -781,22 +980,9 @@ plt.tight_layout()
 guardar(fig, "fig6_comparativa_outliers.png")
 ```
 
-```{python}
-fig, ax = plt.subplots(figsize=(10, 5))
-fig.suptitle("Media vs Mediana (justifica usar mediana para imputar)",
-             fontsize=13, fontweight="bold")
-medias = [df_work[c].mean() for c in COLS]
-medianas = [df_work[c].median() for c in COLS]
-ax.bar(x - 0.18, medias, 0.35, label="Media", color=PINK)
-ax.bar(x + 0.18, medianas, 0.35, label="Mediana", color=CYAN)
-ax.set_xticks(x)
-ax.set_xticklabels(labels)
-ax.legend()
-ax.grid(axis="y", alpha=0.2)
-plt.tight_layout()
-plt.show()
-guardar(fig, "fig7_media_vs_mediana.png")
-```
+::: {.content-visible when-format="revealjs"}
+##
+:::
 
 ```{python}
 fig, ax = plt.subplots(figsize=(10, 5))
@@ -814,6 +1000,31 @@ plt.tight_layout()
 plt.show()
 guardar(fig, "fig7_media_vs_mediana.png")
 ```
+
+::: {.content-visible when-format="revealjs"}
+##
+:::
+
+```{python}
+fig, ax = plt.subplots(figsize=(10, 5))
+fig.suptitle("Media vs Mediana (justifica usar mediana para imputar)",
+             fontsize=13, fontweight="bold")
+medias = [df_work[c].mean() for c in COLS]
+medianas = [df_work[c].median() for c in COLS]
+ax.bar(x - 0.18, medias, 0.35, label="Media", color=PINK)
+ax.bar(x + 0.18, medianas, 0.35, label="Mediana", color=CYAN)
+ax.set_xticks(x)
+ax.set_xticklabels(labels)
+ax.legend()
+ax.grid(axis="y", alpha=0.2)
+plt.tight_layout()
+plt.show()
+guardar(fig, "fig7_media_vs_mediana.png")
+```
+
+::: {.content-visible when-format="revealjs"}
+##
+:::
 
 ```{python}
 fig, ax = plt.subplots(figsize=(12, 6))
@@ -829,3 +1040,7 @@ plt.tight_layout()
 plt.show()
 guardar(fig, "fig8_publica_vs_privada.png")
 ```
+
+::: {.content-visible when-format="revealjs"}
+##
+:::
