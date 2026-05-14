@@ -244,7 +244,6 @@ AREA_CORTO = {
     "OTROS OFICIOS": "Otros",
 }
 
-# Carpeta de salida para gráficos (relativa al script)
 if "__file__" in globals():
 	DIR = os.path.dirname(os.path.abspath(__file__))
 else:
@@ -252,13 +251,6 @@ else:
 OUT = os.path.join(DIR, "..", "informe")
 os.makedirs(OUT, exist_ok=True)
 
-# %%
-def guardar(fig, nombre):
-    """Guarda figura en la carpeta informe."""
-    ruta = os.path.join(OUT, nombre)
-    fig.savefig(ruta, dpi=150, bbox_inches="tight", facecolor=fig.get_facecolor())
-    plt.close(fig)
-    print(f"  ✓ {nombre}")
 ```
 
 
@@ -440,7 +432,6 @@ ax2.legend()
 ax2.grid(axis="y", alpha=0.25)
 
 plt.tight_layout()
-# guardar(fig, "fig_datos_faltantes.png")
 plt.show()
 ```
 
@@ -608,7 +599,6 @@ for i, c in enumerate(COLS):
     ax.grid(alpha=0.2)
 plt.tight_layout()
 plt.show()
-guardar(fig, "fig_outliers_deteccion_iqr.png")
 ```
 
 ::: {.content-visible when-format="revealjs"}
@@ -677,7 +667,6 @@ ax3.grid(axis="y", alpha=0.2)
 plt.tight_layout()
 plt.show()
 
-guardar(fig, "fig_outliers_tratamiento_comparativa.png")
 ```
 
 ::: {.content-visible when-format="revealjs"}
@@ -807,7 +796,6 @@ for i, c in enumerate(COLS):
     ax.grid(alpha=0.2)
 plt.tight_layout()
 plt.show()
-guardar(fig, "fig1_boxplots.png")
 ```
 
 ::: {.content-visible when-format="revealjs"}
@@ -873,7 +861,6 @@ ax3.grid(axis="y", alpha=0.2)
 
 plt.tight_layout()
 plt.show()
-guardar(fig, "fig_outliers_tratamiento_comparativa.png")
 ```
 
 ::: {.content-visible when-format="revealjs"}
@@ -899,7 +886,6 @@ ax.legend()
 ax.grid(axis="x", alpha=0.2)
 plt.tight_layout()
 plt.show()
-guardar(fig, "fig3_barras_area.png")
 ```
 
 ::: {.content-visible when-format="revealjs"}
@@ -926,7 +912,6 @@ ax.legend()
 ax.grid(axis="x", alpha=0.2)
 plt.tight_layout()
 plt.show()
-guardar(fig, "fig4_barras_ciudad.png")
 ```
 
 ::: {.content-visible when-format="revealjs"}
@@ -955,7 +940,6 @@ ax.set_ylabel("Matriculados (miles)")
 ax.legend()
 ax.grid(alpha=0.2)
 plt.tight_layout()
-guardar(fig, "fig5_evolucion.png")
 ```
 
 ::: {.content-visible when-format="revealjs"}
@@ -990,7 +974,6 @@ ax2.legend()
 ax2.grid(axis="y", alpha=0.2)
 
 plt.tight_layout()
-guardar(fig, "fig6_comparativa_outliers.png")
 ```
 
 ::: {.content-visible when-format="revealjs"}
@@ -1012,7 +995,6 @@ ax.legend()
 ax.grid(axis="y", alpha=0.2)
 plt.tight_layout()
 plt.show()
-guardar(fig, "fig7_media_vs_mediana.png")
 ```
 
 ::: {.content-visible when-format="revealjs"}
@@ -1034,7 +1016,6 @@ ax.legend()
 ax.grid(axis="y", alpha=0.2)
 plt.tight_layout()
 plt.show()
-guardar(fig, "fig7_media_vs_mediana.png")
 ```
 
 ::: {.content-visible when-format="revealjs"}
@@ -1054,7 +1035,6 @@ ax.legend()
 ax.grid(axis="y", alpha=0.2)
 plt.tight_layout()
 plt.show()
-guardar(fig, "fig8_publica_vs_privada.png")
 ```
 
 ::: {.content-visible when-format="revealjs"}
