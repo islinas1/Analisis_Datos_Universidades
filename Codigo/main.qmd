@@ -48,17 +48,21 @@ Para garantizar la rigurosidad de este análisis, se ha adoptado la metodología
 ##
 :::
 
-::: {.content-visible when-format="revealjs"}
-##
-:::
-
 # Contextualización y Definición del Problema
 
 ## Marco teórico y contextual
 
 En el contexto global y particularmente en Bolivia, las universidades han asumido el reto de reducir la desigualdad, buscando democratizar el acceso al crecimiento profesional. Sin embargo, este incremento en la oferta educativa ha generado una paradoja: en lugar de equilibrar la balanza, ha consolidado la capacidad técnica de los centros donde se originaron estos modelos (como Europa), dejando rezagadas a otras regiones.
 
+::: {.content-visible when-format="revealjs"}
+##
+:::
+
 Bolivia, como nación latinoamericana, enfrenta esta brecha con un agravante estructural: el predominio del comercio informal sobre el empleo formal. Esta realidad subraya la importancia crítica de la educación superior; no solo se trata de masificar la matrícula, sino de garantizar que la formación académica permita al país competir en estándares internacionales a largo plazo.
+
+::: {.content-visible when-format="revealjs"}
+##
+:::
 
 El presente informe analiza los datos históricos de las universidades en Bolivia para diagnosticar el panorama educativo actual y evaluar si el camino trazado es el adecuado para los desafíos futuros. Si bien el mercado laboral presenta dificultades evidentes para los nuevos profesionales, este estudio no se centra en la empleabilidad, sino en el comportamiento de la accesibilidad a la educación visto desde perspectiva de las matrículas. Se parte de la premisa de que la educación superior mantiene su vigencia y utilidad, incluso en sectores tradicionalmente informales como los negocios. Por tanto, esta investigación se limita a un análisis descriptivo y prospectivo de los datos académicos disponibles.
 
