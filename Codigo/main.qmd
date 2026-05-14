@@ -280,28 +280,29 @@ df = pd.read_csv(os.path.join(DIR, "universities_bolivia_dataset.csv"))
 ###  Metricas descriptivas
 
 ```{python}
-resumen = []
-for c in COLS:
-    v = df[c]
-    resumen.append({
-        "Var": CORTO[c], "N": len(v), "Media": v.mean(),
-        "Mediana": v.median(), "Std": v.std(),
-        "Mín": v.min(), "Máx": v.max(),
-        "Asimetría": v.skew(), "Curtosis": v.kurtosis(),
-    })
-print(pd.DataFrame(resumen).to_string(
-    index=False, float_format="{:.1f}".format))
+# 1. Resumen Estadístico General (Optimizando el bucle con .agg)
+resumen = (df[COLS]
+           .rename(columns=CORTO)
+           .agg(['count', 'mean', 'median', 'std', 'min', 'max', 'skew', 'kurtosis'])
+           .T.rename(columns={'count': 'N', 'mean': 'Media', 'median': 'Mediana', 
+                              'std': 'Std', 'min': 'Mín', 'max': 'Máx', 
+                              'skew': 'Asimetría', 'kurtosis': 'Curtosis'}))
 
-print("\n  ── Por Tipo de Educación ──")
-print(df.groupby("TIPO DE EDUCACIÓN")[
-      COLS].mean().round(1).rename(columns=CORTO))
+print("── Resumen Estadístico ──")
+print(resumen.to_string(float_format="{:.1f}".format))
 
-print("\n  ── Por Departamento (Matriculados) ──")
-cm = df.groupby("CIUDAD")[
-    ["MATRICULADOS HOMBRES", "MATRICULADOS MUJERES"]].mean().round(1)
-cm.columns = ["Hombres", "Mujeres"]
+# 2. Por Tipo de Educación
+print("\n── Por Tipo de Educación ──")
+print(df.groupby("TIPO DE EDUCACIÓN")[COLS].mean().rename(columns=CORTO).round(1))
+
+# 3. Por Departamento (Matriculados)
+print("\n── Por Departamento (Matriculados) ──")
+cm = (df.groupby("CIUDAD")[["MATRICULADOS HOMBRES", "MATRICULADOS MUJERES"]]
+      .mean()
+      .rename(columns={"MATRICULADOS HOMBRES": "Hombres", "MATRICULADOS MUJERES": "Mujeres"}))
+
 cm["Total"] = cm.sum(axis=1)
-print(cm.sort_values("Total", ascending=False))
+print(cm.sort_values("Total", ascending=False).round(1))
 ```
 
 ::: {.content-visible when-format="revealjs"}
