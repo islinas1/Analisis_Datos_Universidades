@@ -36,20 +36,17 @@ El sistema de educación superior en Bolivia atraviesa un momento de transición
 ##
 :::
 
-El presente estudio surge de la necesidad de transformar los registros históricos de matrículas y titulaciones en conocimiento estratégico. No basta con saber cuántos estudiantes ingresan al sistema; es fundamental identificar quiénes son, qué estudian, en qué departamentos se concentran y si el género sigue siendo un factor determinante en su trayectoria académica. Esta investigación propone un análisis descriptivo y prospectivo que permite visualizar las asimetrías del sistema universitario nacional, ofreciendo una base cuantitativa para la toma de decisiones.
+El presente trabajo surge de la necesidad de transformar los registros históricos de matrículas y titulaciones en conocimiento estratégico. No basta con saber cuántos estudiantes ingresan al sistema; es fundamental identificar quiénes son, qué estudian, en qué departamentos se concentran y si el género sigue siendo un factor determinante en su trayectoria académica.
 
 ::: {.content-visible when-format="revealjs"}
 ##
 :::
 
-Para garantizar la rigurosidad de este análisis, se ha adoptado la metodología CRISP-DM (Cross-Industry Standard Process for Data Mining), un estándar internacional que permite estructurar el ciclo de vida de los datos desde la comprensión del problema institucional hasta la generación de modelos de tendencia. A través de este enfoque, el informe desglosa la realidad educativa boliviana, evaluando la "macrocefalia" académica en el eje troncal y la persistencia de segregaciones que limitan el potencial del capital humano en el país.
+Para garantizar la rigurosidad de este análisis, se ha adoptado la metodología CRISP-DM (Cross-Industry Standard Process for Data Mining), un estándar internacional que permite estructurar el ciclo de vida de los datos desde la comprensión del problema institucional hasta la generación de modelos de tendencia. A través de este enfoque, el informe desglosa la realidad educativa boliviana, evaluando la situación académica en el eje troncal y la persistencia de segregaciones que limitan el potencial del capital humano en el país.
 
 ::: {.content-visible when-format="revealjs"}
 ##
 :::
-
-
-A continuación, se detalla el marco contextual y la problemática que motivan este análisis, estableciendo los objetivos y la hoja de ruta metodológica que guiarán el desarrollo de la investigación.
 
 ::: {.content-visible when-format="revealjs"}
 ##
