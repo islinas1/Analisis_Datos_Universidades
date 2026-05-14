@@ -275,6 +275,39 @@ df = pd.read_csv(os.path.join(DIR, "universities_bolivia_dataset.csv"))
 ##
 :::
 
+## Análisis exploratorio
+
+###  Metricas descriptivas
+
+```{python}
+resumen = []
+for c in COLS:
+    v = df[c]
+    resumen.append({
+        "Var": CORTO[c], "N": len(v), "Media": v.mean(),
+        "Mediana": v.median(), "Std": v.std(),
+        "Mín": v.min(), "Máx": v.max(),
+        "Asimetría": v.skew(), "Curtosis": v.kurtosis(),
+    })
+print(pd.DataFrame(resumen).to_string(
+    index=False, float_format="{:.1f}".format))
+
+print("\n  ── Por Tipo de Educación ──")
+print(df.groupby("TIPO DE EDUCACIÓN")[
+      COLS].mean().round(1).rename(columns=CORTO))
+
+print("\n  ── Por Departamento (Matriculados) ──")
+cm = df.groupby("CIUDAD")[
+    ["MATRICULADOS HOMBRES", "MATRICULADOS MUJERES"]].mean().round(1)
+cm.columns = ["Hombres", "Mujeres"]
+cm["Total"] = cm.sum(axis=1)
+print(cm.sort_values("Total", ascending=False))
+```
+
+::: {.content-visible when-format="revealjs"}
+##
+:::
+
 Veremos algunos datos del dataset
 
 ```{python}
@@ -288,7 +321,7 @@ print(f"  Tipo: {list(df['TIPO DE EDUCACIÓN'].unique())}")
 ##
 :::
 
-# Valores faltantes
+## Valores faltantes
 
 Viendo el diagnósico con NaN literales
 
@@ -303,7 +336,6 @@ print(f"  Total NaN literales: {nan_lit.sum()}")
 ::: {.content-visible when-format="revealjs"}
 ##
 :::
-
 
 Haciendo un diagnóstico para ver todas todas la filas con un registro 0. Un registro con todos los valores en 0 no aporta información; tratarlos como NaN permite imputarlos correctamente.
 
@@ -650,36 +682,7 @@ guardar(fig, "fig_outliers_tratamiento_comparativa.png")
 ##
 :::
 
-# Metricas descriptivas
-
-```{python}
-resumen = []
-for c in COLS:
-    v = df_work[c]
-    resumen.append({
-        "Var": CORTO[c], "N": len(v), "Media": v.mean(),
-        "Mediana": v.median(), "Std": v.std(),
-        "Mín": v.min(), "Máx": v.max(),
-        "Asimetría": v.skew(), "Curtosis": v.kurtosis(),
-    })
-print(pd.DataFrame(resumen).to_string(
-    index=False, float_format="{:.1f}".format))
-
-print("\n  ── Por Tipo de Educación ──")
-print(df_work.groupby("TIPO DE EDUCACIÓN")[
-      COLS].mean().round(1).rename(columns=CORTO))
-
-print("\n  ── Por Departamento (Matriculados) ──")
-cm = df_work.groupby("CIUDAD")[
-    ["MATRICULADOS HOMBRES", "MATRICULADOS MUJERES"]].mean().round(1)
-cm.columns = ["Hombres", "Mujeres"]
-cm["Total"] = cm.sum(axis=1)
-print(cm.sort_values("Total", ascending=False))
-```
-
-::: {.content-visible when-format="revealjs"}
-##
-:::
+## Transformaciones
 
 - Normalización: Lleva los valores a 0 y 1. Se recomienda para redes neuronales.
 - Estandarizacion: Lleva los valores con media 0 y desviación estandar
