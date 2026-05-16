@@ -245,12 +245,9 @@ AREA_CORTO = {
 }
 
 if "__file__" in globals():
-	DIR = os.path.dirname(os.path.abspath(__file__))
+    DIR = os.path.dirname(os.path.abspath(__file__))
 else:
-	DIR = os.getcwd()
-OUT = os.path.join(DIR, "..", "informe")
-os.makedirs(OUT, exist_ok=True)
-
+    DIR = os.getcwd()
 ```
 
 
