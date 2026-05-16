@@ -454,53 +454,64 @@ A continuación se verá una muestrá de tamaño 5:
 df.sample(n=5)
 ```
 
-
-Ahora se verán algunas métricas descriptivas:
 ###  Metricas descriptivas
 
+Ahora se verán algunas métricas descriptivas:
+
 ```{python}
-# 1. Resumen Estadístico General (Optimizando el bucle con .agg)
 resumen = (df[COLS_DISCRETE]
            .rename(columns=CORTO)
-           .agg(['count', 'mean', 'median', 'std', 'min', 'max', 'skew', 'kurtosis'])
-           .T.rename(columns={'count': 'N', 'mean': 'Media', 'median': 'Mediana', 
-                              'std': 'Std', 'min': 'Mín', 'max': 'Máx', 
-                              'skew': 'Asimetría', 'kurtosis': 'Curtosis'}))
+           .agg(METRICS)
+           .T.rename(columns=METRICS_NAMES))
 
-print("── Resumen Estadístico ──")
 print(resumen.to_string(float_format="{:.1f}".format))
-
-# 2. Por Tipo de Educación
-print("\n── Por Tipo de Educación ──")
-print(df.groupby("TIPO DE EDUCACIÓN")[COLS].mean().rename(columns=CORTO).round(1))
-
-# 3. Por Departamento (Matriculados)
-print("\n── Por Departamento (Matriculados) ──")
-cm = (df.groupby("CIUDAD")[["MATRICULADOS HOMBRES", "MATRICULADOS MUJERES"]]
-      .mean()
-      .rename(columns={"MATRICULADOS HOMBRES": "Hombres", "MATRICULADOS MUJERES": "Mujeres"}))
-
-cm["Total"] = cm.sum(axis=1)
-print(cm.sort_values("Total", ascending=False).round(1))
 ```
 
 ::: {.content-visible when-format="revealjs"}
 ##
 :::
 
-Veremos algunos datos del dataset
+Creando una función para realizar análisis estadístico por variables nominales:
 
 ```{python}
-print(f"  Filas: {len(df):,}  |  Columnas: {df.shape[1]}")
-print(f"  Años: {df['AÑO'].min()} – {df['AÑO'].max()}")
-print(f"  Departamentos: {sorted(df['CIUDAD'].unique())}")
-print(f"  Tipo: {list(df['TIPO DE EDUCACIÓN'].unique())}")
+def metrics_by_discrete_column(column_name):
+    for metric in METRICS:
+        metric_name = METRICS_NAMES[metric]
+        print(f"\n{metric_name}:")
+        print(df.groupby(column_name)[COLS_DISCRETE].agg(metric).rename(columns=CORTO).round(1))
+```
+
+Resumen estadístico por **TIPO DE EDUCACIÓN** (`privada` y `publica`):
+
+```{python}
+metrics_by_discrete_column("TIPO DE EDUCACIÓN")
 ```
 
 ::: {.content-visible when-format="revealjs"}
 ##
 :::
 
+Resumen estadístico por **CIUDAD**:
+
+```{python}
+metrics_by_discrete_column("CIUDAD")
+```
+
+::: {.content-visible when-format="revealjs"}
+##
+:::
+
+Resumen estadístico por **ÁREA**:
+
+```{python}
+metrics_by_discrete_column("ÁREA")
+```
+
+::: {.content-visible when-format="revealjs"}
+##
+:::
+
+El resumen estadístico por **CARRERA** no se realizará por que se tienen 243 valores
 ## Valores faltantes
 
 Viendo el diagnósico con NaN literales
