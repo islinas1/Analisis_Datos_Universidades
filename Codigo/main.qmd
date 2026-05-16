@@ -250,6 +250,10 @@ AREA_CORTO = {
     "OTROS OFICIOS": "Otros",
 }
 
+METRICS = ['count', 'mean', 'median', 'std', 'min', 'max']
+METRICS_NAMES = {'count': 'Num. datos', 'mean': 'Media', 'median': 'Mediana',
+                'std': 'Std', 'min': 'Mín', 'max': 'Máx'}
+
 UNIQUE_VALUES = dict()
 
 if "__file__" in globals():
