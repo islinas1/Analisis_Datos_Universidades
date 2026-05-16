@@ -286,6 +286,13 @@ print(f"Columnas: {df.shape[1]}")
 
 El conjunto de datos tiene las siguentes columnas:
 
+```{python}
+for column_name in df.columns.to_list():
+    print("- ", column_name) 
+```
+
+Se hará una breve descripción de cada columna:
+
 1. **ÁREA**
 <!-- implementar exto: añadir descripcion -->
 
@@ -443,16 +450,6 @@ A continuación se verá una muestrá de tamaño 5:
 df.sample(n=5)
 ```
 
-::: {.content-visible when-format="revealjs"}
-##
-:::
-
-Las columnas de este dataset son:
-
-```{python}
-for column_name in df.columns.to_list():
-    print("- ", column_name) 
-```
 
 Ahora se verán algunas métricas descriptivas:
 ###  Metricas descriptivas
