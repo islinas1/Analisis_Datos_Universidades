@@ -275,7 +275,186 @@ df = pd.read_csv(os.path.join(DIR, "universities_bolivia_dataset.csv"))
 
 ## Análisis exploratorio
 
+### Diccionario de Datos
 
+El conjunto de datos tiene las siguientes formas:
+
+```{python}
+print(f"Filas: {len(df):,}")
+print(f"Columnas: {df.shape[1]}")
+```
+
+El conjunto de datos tiene las siguentes columnas:
+
+1. **ÁREA**
+<!-- implementar exto: añadir descripcion -->
+
+```{python}
+UNIQUE_VALUES["ÁREA"] = sorted(df['ÁREA'].unique())
+print("Numero de valores unicos en ÁREA:", len(UNIQUE_VALUES["ÁREA"]), "\n")
+for i, unique_value in enumerate(UNIQUE_VALUES["ÁREA"]):
+    print(f"{i+1}. ", unique_value)
+```
+
+::: {.content-visible when-format="revealjs"}
+##
+:::
+
+2. **CARRERA**
+<!-- implementar exto: añadir descripcion -->
+
+En este caso no se mostrarán todos los valores por que son muchos
+
+```{python}
+UNIQUE_VALUES["CARRERA"] = sorted(df['CARRERA'].unique())
+print("Numero de valores unicos en CARRERA:", len(UNIQUE_VALUES["CARRERA"]), "\n")
+```
+
+Como son muchos valores, solo se imprimirá los primeros 10:
+
+```{python}
+for i, unique_value in enumerate(UNIQUE_VALUES["CARRERA"][:10]):
+    print(f"{i+1}. ", unique_value)
+```
+
+::: {.content-visible when-format="revealjs"}
+##
+:::
+
+3. **CIUDAD**
+<!-- implementar exto: añadir descripcion -->
+
+```{python}
+UNIQUE_VALUES["CIUDAD"] = sorted(df['CIUDAD'].unique())
+print("Numero de valores unicos en CIUDAD:", len(UNIQUE_VALUES["CIUDAD"]), "\n")
+for i, unique_value in enumerate(UNIQUE_VALUES["CIUDAD"]):
+    print(f"{i+1}. ", unique_value)
+```
+
+::: {.content-visible when-format="revealjs"}
+##
+:::
+
+4. **AÑO**
+<!-- implementar exto: añadir descripcion -->
+
+El rango de años es el siguiente:
+
+```{python}
+print(f"Rango de años: {df['AÑO'].min()} – {df['AÑO'].max()}")
+```
+
+Por seguridad se verificará si todos los años estan disponibles:
+
+```{python}
+num_years = len(df['AÑO'].unique())
+print("Número de años únicos:", num_years)
+```
+
+Ya que los rangos van de 2001 al 2016, existen 16 años, asi que como hay 16 valores únicos, asumimos que este rango esta completo.
+
+::: {.content-visible when-format="revealjs"}
+##
+:::
+
+5. **TIPO DE EDUCACIÓN**
+<!-- implementar exto: añadir descripcion -->
+
+```{python}
+UNIQUE_VALUES["TIPO DE EDUCACIÓN"] = sorted(df['TIPO DE EDUCACIÓN'].unique())
+print("Numero de valores unicos en TIPO DE EDUCACIÓN:", len(UNIQUE_VALUES["TIPO DE EDUCACIÓN"]), "\n")
+for i, unique_value in enumerate(UNIQUE_VALUES["TIPO DE EDUCACIÓN"]):
+    print(f"{i+1}. ", unique_value)
+```
+
+::: {.content-visible when-format="revealjs"}
+##
+:::
+
+6. **MATRICULADOS HOMBRES**
+<!-- implementar exto: añadir descripcion -->
+
+```{python}
+df["MATRICULADOS HOMBRES"].describe()
+```
+
+::: {.content-visible when-format="revealjs"}
+##
+:::
+
+7. **MATRICULADOS MUJERES**
+<!-- implementar exto: añadir descripcion -->
+
+```{python}
+df["MATRICULADOS MUJERES"].describe()
+```
+
+::: {.content-visible when-format="revealjs"}
+##
+:::
+
+8. **NUEVOS HOMBRES**
+<!-- implementar exto: añadir descripcion -->
+
+```{python}
+df["NUEVOS HOMBRES"].describe()
+```
+
+::: {.content-visible when-format="revealjs"}
+##
+:::
+
+9. **NUEVOS MUJERES**
+<!-- implementar exto: añadir descripcion -->
+
+```{python}
+df["NUEVOS MUJERES"].describe()
+```
+
+::: {.content-visible when-format="revealjs"}
+##
+:::
+
+10. **TITULADOS HOMBRES**
+<!-- implementar exto: añadir descripcion -->
+
+```{python}
+df["TITULADOS HOMBRES"].describe()
+```
+
+::: {.content-visible when-format="revealjs"}
+##
+:::
+
+11. **TITULADOS MUJERES**
+<!-- implementar exto: añadir descripcion -->
+
+```{python}
+df["TITULADOS MUJERES"].describe()
+```
+
+::: {.content-visible when-format="revealjs"}
+##
+:::
+
+A continuación se verá una muestrá de tamaño 5:
+
+```{python}
+df.sample(n=5)
+```
+
+::: {.content-visible when-format="revealjs"}
+##
+:::
+
+Las columnas de este dataset son:
+
+```{python}
+for column_name in df.columns.to_list():
+    print("- ", column_name) 
+```
+
+Ahora se verán algunas métricas descriptivas:
 ###  Metricas descriptivas
 
 ```{python}
