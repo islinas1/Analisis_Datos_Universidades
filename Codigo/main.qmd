@@ -171,7 +171,7 @@ Para el análisis de los datos se usará lo que es la metodologia CRISP-DM que e
 5.  **Evaluación (Evaluation)**: Una vez construido el modelo (o modelos), se debe evaluar su calidad, eficacia y si el modelo cumple con los objetivos definidos en la primera fase y se determina si existe alguna razón importante por la cual el modelo no deba ser utilizado.
 6.  **Despliegue (Deployment)**: Los conocimientos obtenidos deben ser organizados y presentados de manera que el usuario final pueda utilizarlos.
 
-La metodología CRISP-DM destaca por su naturaleza cíclica y su versatilidad, siendo un estándar agnóstico al sector o tecnología empleada. Su valor reside en su capacidad para alinear los requisitos técnicos con las metas estratégicas del negocio. La elección de este marco responde a su robustez y rigor, garantizando que el proceso siga un hilo conductor sistemático ---desde la fase de observación hasta la evaluación final--- sin omitir etapas fundamentales del método científico. Entre sus ventajas adicionales se encuentran:
+La metodología CRISP-DM destaca por su naturaleza cíclica y su versatilidad, siendo un estándar agnóstico al sector o tecnología empleada. Su valor reside en su capacidad para alinear los requisitos técnicos con las metas estratégicas del negocio. La elección de este marco responde a su robustez y rigor, garantizando que el proceso siga un hilo conductor sistemático -desde la fase de observación hasta la evaluación final- sin omitir etapas fundamentales del método científico. Entre sus ventajas adicionales se encuentran:
 ::: {.content-visible when-format="revealjs"}
 ##
 :::
