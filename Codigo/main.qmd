@@ -222,10 +222,16 @@ YELLOW, BLUE = "#facc15", "#38bdf8"
 
 colores_box = [CYAN, PINK, PURPLE, GREEN, ORANGE, YELLOW]
 
-COLS = [
+COLS_DISCRETE = [
     "MATRICULADOS HOMBRES", "MATRICULADOS MUJERES",
     "NUEVOS HOMBRES", "NUEVOS MUJERES",
     "TITULADOS HOMBRES", "TITULADOS MUJERES",
+]
+COLS_NOMINAL = [
+    "ÁREA",
+    "CARRERA",
+    "CIUDAD",
+    "TIPO DE EDUCACIÓN"
 ]
 CORTO = {"MATRICULADOS HOMBRES": "Mat.H", "MATRICULADOS MUJERES": "Mat.M",
          "NUEVOS HOMBRES": "Nuev.H", "NUEVOS MUJERES": "Nuev.M",
@@ -243,6 +249,8 @@ AREA_CORTO = {
     "INGENIERIA Y TECNOLOGIA": "Ingeniería",
     "OTROS OFICIOS": "Otros",
 }
+
+UNIQUE_VALUES = dict()
 
 if "__file__" in globals():
     DIR = os.path.dirname(os.path.abspath(__file__))
@@ -267,11 +275,12 @@ df = pd.read_csv(os.path.join(DIR, "universities_bolivia_dataset.csv"))
 
 ## Análisis exploratorio
 
+
 ###  Metricas descriptivas
 
 ```{python}
 # 1. Resumen Estadístico General (Optimizando el bucle con .agg)
-resumen = (df[COLS]
+resumen = (df[COLS_DISCRETE]
            .rename(columns=CORTO)
            .agg(['count', 'mean', 'median', 'std', 'min', 'max', 'skew', 'kurtosis'])
            .T.rename(columns={'count': 'N', 'mean': 'Media', 'median': 'Mediana', 
@@ -317,9 +326,9 @@ print(f"  Tipo: {list(df['TIPO DE EDUCACIÓN'].unique())}")
 Viendo el diagnósico con NaN literales
 
 ```{python}
-nan_lit = df[COLS].isna().sum()
+nan_lit = df[COLS_DISCRETE].isna().sum()
 print("\n  NaN literales por columna:")
-for c in COLS:
+for c in COLS_DISCRETE:
     print(f"    {CORTO[c]:<8} {nan_lit[c]:>6,}")
 print(f"  Total NaN literales: {nan_lit.sum()}")
 ```
@@ -331,13 +340,13 @@ print(f"  Total NaN literales: {nan_lit.sum()}")
 Haciendo un diagnóstico para ver todas todas la filas con un registro 0. Un registro con todos los valores en 0 no aporta información; tratarlos como NaN permite imputarlos correctamente.
 
 ```{python}
-todo_cero = df[COLS].sum(axis=1) == 0
+todo_cero = df[COLS_DISCRETE].sum(axis=1) == 0
 print(f"\n  Filas sin datos (todos ceros): {todo_cero.sum():,}  "
       f"({todo_cero.mean()*100:.1f}% del total)")
 print(f"  Filas con al menos un valor  : {(~todo_cero).sum():,}")
 
 df_work = df.copy()
-for c in COLS:
+for c in COLS_DISCRETE:
     df_work.loc[todo_cero, c] = np.nan
 ```
 
@@ -351,7 +360,7 @@ Viendo una tabla de resumen antes de imputar. La diferencia entre media y median
 print(f"\n  {'Variable':<12} {'Faltantes':>10} {'% total':>8} "
       f"{'Media':>9} {'Mediana':>9} {'Diferencia%':>12}")
 print(f"  {'-'*12} {'-'*10} {'-'*8} {'-'*9} {'-'*9} {'-'*12}")
-for c in COLS:
+for c in COLS_DISCRETE:
     na = df_work[c].isna().sum()
     pct = na / len(df_work) * 100
     me = df_work[c].mean()
@@ -371,13 +380,13 @@ Ahora se hará una imputación con mediana por grupo. Para ello se seguirán las
 2) Mediana global de la columna -> fallback para grupos que también quedaron sin datos.
 
 ```{python}
-for c in COLS:
+for c in COLS_DISCRETE:
     mediana_grupo = df_work.groupby(
         ["ÁREA", "TIPO DE EDUCACIÓN"])[c].transform("median")
     df_work[c] = df_work[c].fillna(mediana_grupo).fillna(df_work[c].median())
 
 print(f"\n  Método : mediana por grupo (ÁREA + TIPO DE EDUCACIÓN)")
-print(f"  NaN restantes tras imputar: {df_work[COLS].isna().sum().sum()}")
+print(f"  NaN restantes tras imputar: {df_work[COLS_DISCRETE].isna().sum().sum()}")
 
 ```
 
@@ -393,19 +402,19 @@ fig.suptitle("2. Datos Faltantes", fontsize=15, fontweight="bold")
 # Izquierda — barras de faltantes por variable
 ax = axes[0]
 colores_na = [CYAN, PINK, PURPLE, GREEN, ORANGE, YELLOW]
-na_counts  = [df[COLS].isna().sum()[c] + todo_cero.sum() for c in COLS]
+na_counts  = [df[COLS_DISCRETE].isna().sum()[c] + todo_cero.sum() for c in COLS_DISCRETE]
 # (NaN literales + filas todo-cero convertidas)
-na_real = [df_work.isna().sum()[c] + 0 for c in COLS]   # después de marcar
-bars = ax.bar([CORTO[c] for c in COLS], [todo_cero.sum()] * len(COLS),
+na_real = [df_work.isna().sum()[c] + 0 for c in COLS_DISCRETE]   # después de marcar
+bars = ax.bar([CORTO[c] for c in COLS_DISCRETE], [todo_cero.sum()] * len(COLS_DISCRETE),
               color=colores_na, alpha=0.0)               # placeholder altura
 # recalcular con la copia marcada
 na_vals = []
 df_tmp = df.copy()
-for c in COLS:
+for c in COLS_DISCRETE:
     df_tmp.loc[todo_cero, c] = np.nan
     na_vals.append(df_tmp[c].isna().sum())
 ax.cla()
-bars = ax.bar([CORTO[c] for c in COLS], na_vals,
+bars = ax.bar([CORTO[c] for c in COLS_DISCRETE], na_vals,
               color=colores_na, edgecolor="white", linewidth=0.6)
 for b, v in zip(bars, na_vals):
     ax.text(b.get_x() + b.get_width() / 2, b.get_height() + 8,
@@ -416,13 +425,13 @@ ax.grid(axis="y", alpha=0.25)
 
 # Derecha — media vs mediana (justificación del imputador)
 ax2 = axes[1]
-x  = np.arange(len(COLS))
-medias   = [df_work[c].mean()   for c in COLS]
-medianas = [df_work[c].median() for c in COLS]
+x  = np.arange(len(COLS_DISCRETE))
+medias   = [df_work[c].mean()   for c in COLS_DISCRETE]
+medianas = [df_work[c].median() for c in COLS_DISCRETE]
 ax2.bar(x - 0.18, medias,   0.35, label="Media",   color=PINK,  alpha=0.85)
 ax2.bar(x + 0.18, medianas, 0.35, label="Mediana", color=CYAN, alpha=0.85)
 ax2.set_xticks(x)
-ax2.set_xticklabels([CORTO[c] for c in COLS])
+ax2.set_xticklabels([CORTO[c] for c in COLS_DISCRETE])
 ax2.set_title("Media vs Mediana\n(asimetría justifica usar mediana)", fontsize=11)
 ax2.set_ylabel("Promedio de estudiantes")
 ax2.legend()
@@ -459,7 +468,7 @@ print(f"  {'Var':<9} {'Q1':>7} {'Q3':>7} {'IQR':>7} "
 print(f"  {'-'*9} {'-'*7} {'-'*7} {'-'*7} {'-'*9} {'-'*9} {'-'*6}")
 
 iqr_res = {}
-for c in COLS:
+for c in COLS_DISCRETE:
     v = df_work[c][df_work[c] > 0]
     q1, q3 = v.quantile(0.25), v.quantile(0.75)
     iqr = q3 - q1
@@ -483,7 +492,7 @@ Se eliminan las filas donde AL MENOS UNA columna supera su límite IQR.
 
 ```{python}
 mask_outlier = pd.Series(False, index=df_work.index)
-for c in COLS:
+for c in COLS_DISCRETE:
     mask_outlier |= (df_work[c] > iqr_res[c]["limite"])
 
 df_elim = df_work[~mask_outlier].copy()
@@ -497,7 +506,7 @@ print(f"\n  {'Var':<9} {'Media orig':>11} {'→ Elim':>9} "
       f"{'Std orig':>10} {'→ Elim':>9} {'Red.Std%':>9}")
 print(f"  {'-'*9} {'-'*11} {'-'*9} {'-'*10} {'-'*9} {'-'*9}")
 elim_res = {}
-for c in COLS:
+for c in COLS_DISCRETE:
     orig_m = df_work[c][df_work[c] > 0].mean()
     orig_s = df_work[c][df_work[c] > 0].std()
     new_m = df_elim[c][df_elim[c] > 0].mean()
@@ -525,7 +534,7 @@ print(f"  {'Var':<9} {'Media orig':>11} {'→ Win':>9} "
 print(f"  {'-'*9} {'-'*11} {'-'*9} {'-'*10} {'-'*9} {'-'*8} {'-'*9}")
 
 win_res = {}
-for c in COLS:
+for c in COLS_DISCRETE:
     v = df_work[c][df_work[c] > 0]
     w = stats.mstats.winsorize(v, limits=[0.05, 0.05])
     n_af = int(((v < np.percentile(v, 5)) | (v > np.percentile(v, 95))).sum())
@@ -550,7 +559,7 @@ print(f"  (ambas usan IQR como criterio de detección)")
 print(f"  {'Var':<9} {'Red.Std Elim%':>14} {'Red.Std Win%':>13}  "
       f"{'Filas perdidas':>15}")
 print(f"  {'-'*9} {'-'*14} {'-'*13}  {'-'*15}")
-for c in COLS:
+for c in COLS_DISCRETE:
     print(f"  {CORTO[c]:<9} {elim_res[c]['red']:>13.1f}% "
           f"{win_res[c]['red']:>12.1f}%  "
           f"{filas_elim:>12,} vs 0")
@@ -573,7 +582,7 @@ fig, axes = plt.subplots(2, 3, figsize=(16, 9))
 fig.suptitle("3a. Detección de Outliers con Regla IQR",
              fontsize=16, fontweight="bold")
 colores_box = [CYAN, PINK, PURPLE, GREEN, ORANGE, YELLOW]
-for i, c in enumerate(COLS):
+for i, c in enumerate(COLS_DISCRETE):
     ax = axes[i // 3][i % 3]
     data = df_work[c][df_work[c] > 0]
     ax.boxplot(
@@ -612,14 +621,14 @@ fig.suptitle(
     "(detección previa con regla IQR en ambos casos)",
     fontsize=13, fontweight="bold",
 )
-labels = [CORTO[c] for c in COLS]
+labels = [CORTO[c] for c in COLS_DISCRETE]
 x = np.arange(len(labels))
 
 # Panel izquierdo — reducción de Std
 ax = axes[0]
-ax.bar(x - 0.18, [elim_res[c]["red"] for c in COLS], 0.35,
+ax.bar(x - 0.18, [elim_res[c]["red"] for c in COLS_DISCRETE], 0.35,
        label="Eliminación", color=RED,   alpha=0.85)
-ax.bar(x + 0.18, [win_res[c]["red"] for c in COLS], 0.35,
+ax.bar(x + 0.18, [win_res[c]["red"] for c in COLS_DISCRETE], 0.35,
        label="Winsorización", color=GREEN, alpha=0.85)
 ax.set_xticks(x)
 ax.set_xticklabels(labels, rotation=15)
@@ -630,9 +639,9 @@ ax.grid(axis="y", alpha=0.2)
 
 # Panel central — media antes/después por tratamiento
 ax2 = axes[1]
-medias_orig = [df_work[c][df_work[c] > 0].mean() for c in COLS]
-medias_elim = [elim_res[c]["new_m"] for c in COLS]
-medias_win = [win_res[c]["win_m"] for c in COLS]
+medias_orig = [df_work[c][df_work[c] > 0].mean() for c in COLS_DISCRETE]
+medias_elim = [elim_res[c]["new_m"] for c in COLS_DISCRETE]
+medias_win = [win_res[c]["win_m"] for c in COLS_DISCRETE]
 ax2.bar(x - 0.25, medias_orig, 0.24,
         label="Original",     color=BLUE,   alpha=0.85)
 ax2.bar(x,        medias_elim, 0.24,
@@ -648,8 +657,8 @@ ax2.grid(axis="y", alpha=0.2)
 
 # Panel derecho — costo: filas perdidas vs. filas modificadas
 ax3 = axes[2]
-filas_mod_win = [win_res[c]["n"] for c in COLS]
-ax3.bar(x - 0.18, [filas_elim] * len(COLS), 0.35,
+filas_mod_win = [win_res[c]["n"] for c in COLS_DISCRETE]
+ax3.bar(x - 0.18, [filas_elim] * len(COLS_DISCRETE), 0.35,
         label=f"Filas eliminadas ({filas_elim:,})", color=RED,    alpha=0.85)
 ax3.bar(x + 0.18, filas_mod_win,              0.35,
         label="Filas modificadas (win)",           color=ORANGE, alpha=0.85)
@@ -686,17 +695,17 @@ Aplicaremos ambos casos por si acaso para en un futuro usar en diferentes casos.
 Usaremos Scikit-Learn, ya que nos permitirá poder realizar el train spit posterior.
 
 ```{python}
-COLS_TO_STANDARDIZE = COLS.copy()
-print("Columnas a estandarizar:", COLS_TO_STANDARDIZE)
+COLS_DISCRETE_TO_STANDARDIZE = COLS_DISCRETE.copy()
+print("Columnas a estandarizar:", COLS_DISCRETE_TO_STANDARDIZE)
 scaler_standard_scaler = StandardScaler()
 df_work_standard = df_work.copy()
-df_work_standard[COLS_TO_STANDARDIZE] = scaler_standard_scaler.fit_transform(
-    df_work_standard[COLS])
+df_work_standard[COLS_DISCRETE_TO_STANDARDIZE] = scaler_standard_scaler.fit_transform(
+    df_work_standard[COLS_DISCRETE])
 
 print("\nMuestra:\n")
-print(df_work_standard[COLS_TO_STANDARDIZE].sample(n=5))
+print(df_work_standard[COLS_DISCRETE_TO_STANDARDIZE].sample(n=5))
 print("\nDescripción:\n")
-print(df_work_standard[COLS_TO_STANDARDIZE].describe())
+print(df_work_standard[COLS_DISCRETE_TO_STANDARDIZE].describe())
 ```
 
 ::: {.content-visible when-format="revealjs"}
@@ -705,17 +714,17 @@ print(df_work_standard[COLS_TO_STANDARDIZE].describe())
 
 ```{python}
 
-COLS_TO_NORMALIZE = COLS.copy()
-print("Columnas a estandarizar:", COLS_TO_NORMALIZE)
+COLS_DISCRETE_TO_NORMALIZE = COLS_DISCRETE.copy()
+print("Columnas a estandarizar:", COLS_DISCRETE_TO_NORMALIZE)
 scaler_min_max_scaler = MinMaxScaler()
 df_work_min_max_scaler = df_work.copy()
-df_work_min_max_scaler[COLS_TO_NORMALIZE] = scaler_min_max_scaler.fit_transform(
-    df_work_min_max_scaler[COLS])
+df_work_min_max_scaler[COLS_DISCRETE_TO_NORMALIZE] = scaler_min_max_scaler.fit_transform(
+    df_work_min_max_scaler[COLS_DISCRETE])
 
 print("\nMuestra:\n")
-print(df_work_min_max_scaler[COLS_TO_NORMALIZE].sample(n=5))
+print(df_work_min_max_scaler[COLS_DISCRETE_TO_NORMALIZE].sample(n=5))
 print("\nDescripción:\n")
-print(df_work_min_max_scaler[COLS_TO_NORMALIZE].describe())
+print(df_work_min_max_scaler[COLS_DISCRETE_TO_NORMALIZE].describe())
 ```
 
 ::: {.content-visible when-format="revealjs"}
@@ -741,9 +750,9 @@ df_change_type = df_work.copy()
 :::
 
 ```{python}
-CATEGORICAL_COLS = ["ÁREA", "CARRERA", "CIUDAD", "TIPO DE EDUCACIÓN"]
-print(f"Convirtiendo {CATEGORICAL_COLS} a categórica")
-df_change_type[CATEGORICAL_COLS] = df_change_type[CATEGORICAL_COLS].astype(
+CATEGORICAL_COLS_DISCRETE = ["ÁREA", "CARRERA", "CIUDAD", "TIPO DE EDUCACIÓN"]
+print(f"Convirtiendo {CATEGORICAL_COLS_DISCRETE} a categórica")
+df_change_type[CATEGORICAL_COLS_DISCRETE] = df_change_type[CATEGORICAL_COLS_DISCRETE].astype(
     "category")
 ```
 
@@ -780,7 +789,7 @@ print(df_change_type[["ÁREA", "CARRERA", "CIUDAD",
 #| echo: false
 fig, axes = plt.subplots(2, 3, figsize=(16, 9))
 fig.suptitle("Diagramas de Caja", fontsize=16, fontweight="bold")
-for i, c in enumerate(COLS):
+for i, c in enumerate(COLS_DISCRETE):
     ax = axes[i // 3][i % 3]
     data = df_work[c][df_work[c] > 0]
     bp = ax.boxplot(data, patch_artist=True, widths=0.5,
@@ -807,14 +816,14 @@ fig.suptitle(
     "(detección previa con regla IQR en ambos casos)",
     fontsize=13, fontweight="bold",
 )
-labels = [CORTO[c] for c in COLS]
+labels = [CORTO[c] for c in COLS_DISCRETE]
 x = np.arange(len(labels))
 
 # Panel izquierdo — reducción de Std
 ax = axes[0]
-ax.bar(x - 0.18, [elim_res[c]["red"] for c in COLS], 0.35,
+ax.bar(x - 0.18, [elim_res[c]["red"] for c in COLS_DISCRETE], 0.35,
        label="Eliminación", color=RED,   alpha=0.85)
-ax.bar(x + 0.18, [win_res[c]["red"] for c in COLS], 0.35,
+ax.bar(x + 0.18, [win_res[c]["red"] for c in COLS_DISCRETE], 0.35,
        label="Winsorización", color=GREEN, alpha=0.85)
 ax.set_xticks(x)
 ax.set_xticklabels(labels, rotation=15)
@@ -825,9 +834,9 @@ ax.grid(axis="y", alpha=0.2)
 
 # Panel central — media antes/después por tratamiento
 ax2 = axes[1]
-medias_orig = [df_work[c][df_work[c] > 0].mean() for c in COLS]
-medias_elim = [elim_res[c]["new_m"] for c in COLS]
-medias_win = [win_res[c]["win_m"] for c in COLS]
+medias_orig = [df_work[c][df_work[c] > 0].mean() for c in COLS_DISCRETE]
+medias_elim = [elim_res[c]["new_m"] for c in COLS_DISCRETE]
+medias_win = [win_res[c]["win_m"] for c in COLS_DISCRETE]
 ax2.bar(x - 0.25, medias_orig, 0.24,
         label="Original",     color=BLUE,   alpha=0.85)
 ax2.bar(x,        medias_elim, 0.24,
@@ -843,8 +852,8 @@ ax2.grid(axis="y", alpha=0.2)
 
 # Panel derecho — costo: filas perdidas vs. filas modificadas
 ax3 = axes[2]
-filas_mod_win = [win_res[c]["n"] for c in COLS]
-ax3.bar(x - 0.18, [filas_elim] * len(COLS), 0.35,
+filas_mod_win = [win_res[c]["n"] for c in COLS_DISCRETE]
+ax3.bar(x - 0.18, [filas_elim] * len(COLS_DISCRETE), 0.35,
         label=f"Filas eliminadas ({filas_elim:,})", color=RED,    alpha=0.85)
 ax3.bar(x + 0.18, filas_mod_win,              0.35,
         label="Filas modificadas (win)",           color=ORANGE, alpha=0.85)
@@ -947,13 +956,13 @@ plt.tight_layout()
 fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 6))
 fig.suptitle("Comparativa: IQR vs Winsorización",
              fontsize=14, fontweight="bold")
-labels = [CORTO[c] for c in COLS]
+labels = [CORTO[c] for c in COLS_DISCRETE]
 x = np.arange(len(labels))
 
 ax1.bar(x - 0.18, [iqr_res[c]["n"]
-        for c in COLS], 0.35, label="IQR", color=RED)
+        for c in COLS_DISCRETE], 0.35, label="IQR", color=RED)
 ax1.bar(x + 0.18, [win_res[c]["n"]
-        for c in COLS], 0.35, label="Winsor", color=ORANGE)
+        for c in COLS_DISCRETE], 0.35, label="Winsor", color=ORANGE)
 ax1.set_xticks(x)
 ax1.set_xticklabels(labels, rotation=30)
 ax1.set_title("Cantidad de outliers detectados", fontsize=11)
@@ -961,9 +970,9 @@ ax1.legend()
 ax1.grid(axis="y", alpha=0.2)
 
 ax2.bar(x - 0.18, [win_res[c]["orig_s"]
-        for c in COLS], 0.35, label="Std Original", color=PURPLE)
+        for c in COLS_DISCRETE], 0.35, label="Std Original", color=PURPLE)
 ax2.bar(x + 0.18, [float(win_res[c]["win_s"])
-        for c in COLS], 0.35, label="Std Winsorizada", color=GREEN)
+        for c in COLS_DISCRETE], 0.35, label="Std Winsorizada", color=GREEN)
 ax2.set_xticks(x)
 ax2.set_xticklabels(labels, rotation=30)
 ax2.set_title("Reducción de Desv. Estándar", fontsize=11)
@@ -982,8 +991,8 @@ plt.tight_layout()
 fig, ax = plt.subplots(figsize=(10, 5))
 fig.suptitle("Media vs Mediana (justifica usar mediana para imputar)",
              fontsize=13, fontweight="bold")
-medias = [df_work[c].mean() for c in COLS]
-medianas = [df_work[c].median() for c in COLS]
+medias = [df_work[c].mean() for c in COLS_DISCRETE]
+medianas = [df_work[c].median() for c in COLS_DISCRETE]
 ax.bar(x - 0.18, medias, 0.35, label="Media", color=PINK)
 ax.bar(x + 0.18, medianas, 0.35, label="Mediana", color=CYAN)
 ax.set_xticks(x)
@@ -1003,8 +1012,8 @@ plt.show()
 fig, ax = plt.subplots(figsize=(10, 5))
 fig.suptitle("Media vs Mediana (justifica usar mediana para imputar)",
              fontsize=13, fontweight="bold")
-medias = [df_work[c].mean() for c in COLS]
-medianas = [df_work[c].median() for c in COLS]
+medias = [df_work[c].mean() for c in COLS_DISCRETE]
+medianas = [df_work[c].median() for c in COLS_DISCRETE]
 ax.bar(x - 0.18, medias, 0.35, label="Media", color=PINK)
 ax.bar(x + 0.18, medianas, 0.35, label="Mediana", color=CYAN)
 ax.set_xticks(x)
@@ -1023,7 +1032,7 @@ plt.show()
 #| echo: false
 fig, ax = plt.subplots(figsize=(12, 6))
 fig.suptitle("Promedio: Pública vs Privada", fontsize=14, fontweight="bold")
-tm = df_work.groupby("TIPO DE EDUCACIÓN")[COLS].mean()
+tm = df_work.groupby("TIPO DE EDUCACIÓN")[COLS_DISCRETE].mean()
 ax.bar(x - 0.18, tm.loc["PUBLICA"], 0.35, label="Pública", color=CYAN)
 ax.bar(x + 0.18, tm.loc["PRIVADA"], 0.35, label="Privada", color=ORANGE)
 ax.set_xticks(x)
