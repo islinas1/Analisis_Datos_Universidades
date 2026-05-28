@@ -202,10 +202,25 @@ Importamos las librerias que usaremos:
 ```{python}
 import pandas as pd
 import numpy as np
-from scipy import stats
 import matplotlib.pyplot as plt
+import matplotlib.ticker as mtick
+import seaborn as sns
+from scipy import stats
+from scipy.cluster.hierarchy import dendrogram, linkage
+from sklearn.preprocessing import StandardScaler, MinMaxScaler, LabelEncoder
+from sklearn.linear_model import LinearRegression
+from sklearn.tree import DecisionTreeRegressor
+from sklearn.cluster import KMeans
+from sklearn.metrics import silhouette_score, mean_squared_error, r2_score
+from sklearn.model_selection import train_test_split
+from sklearn.decomposition import PCA
 import os
-from sklearn.preprocessing import StandardScaler, MinMaxScaler
+import warnings
+warnings.filterwarnings('ignore')
+
+sns.set_theme(style='whitegrid', palette='muted')
+plt.rcParams['figure.dpi'] = 110
+plt.rcParams['font.size'] = 11
 ```
 
 ::: {.content-visible when-format="revealjs"}
@@ -220,7 +235,13 @@ CYAN, PINK, PURPLE = "#06b6d4", "#f472b6", "#a78bfa"
 GREEN, ORANGE, RED = "#34d399", "#fb923c", "#ef4444"
 YELLOW, BLUE = "#facc15", "#38bdf8"
 
+COLORS = {
+    "MEN": "#2196F3", "WOMEN": "#E91E63",
+    "PUBLIC": "#4CAF50", "PRIVATE": "#FF9800",
+}
+
 colores_box = [CYAN, PINK, PURPLE, GREEN, ORANGE, YELLOW]
+COLORS_CLUSTER = ['#E91E63', '#2196F3', '#4CAF50', '#FF9800', '#9C27B0']
 
 COLS_DISCRETE = [
     "MATRICULADOS HOMBRES", "MATRICULADOS MUJERES",
@@ -298,7 +319,7 @@ for column_name in df.columns.to_list():
 Se hará una breve descripción de cada columna:
 
 1. **ÁREA**
-<!-- implementar exto: añadir descripcion -->
+Categorización académica de cada carrera universitaria en 10 grandes áreas del conocimiento: Arquitectura, Ciencias Agrícolas, Ciencias Básicas, Comunicación, Educación, Salud, Económicas, Sociales, Ingeniería y Otros Oficios.
 
 ```{python}
 UNIQUE_VALUES["ÁREA"] = sorted(df['ÁREA'].unique())
@@ -312,7 +333,7 @@ for i, unique_value in enumerate(UNIQUE_VALUES["ÁREA"]):
 :::
 
 2. **CARRERA**
-<!-- implementar exto: añadir descripcion -->
+Nombre específico del programa académico o carrera universitaria (e.g., Medicina, Derecho, Ingeniería Civil). Existen 243 carreras distintas en el dataset.
 
 En este caso no se mostrarán todos los valores por que son muchos
 
@@ -333,7 +354,7 @@ for i, unique_value in enumerate(UNIQUE_VALUES["CARRERA"][:10]):
 :::
 
 3. **CIUDAD**
-<!-- implementar exto: añadir descripcion -->
+Departamento de Bolivia donde se imparte la carrera. Corresponde a las 9 entidades territoriales del país: Beni, Chuquisaca, Cochabamba, La Paz, Oruro, Pando, Potosí, Santa Cruz y Tarija.
 
 ```{python}
 UNIQUE_VALUES["CIUDAD"] = sorted(df['CIUDAD'].unique())
@@ -347,7 +368,7 @@ for i, unique_value in enumerate(UNIQUE_VALUES["CIUDAD"]):
 :::
 
 4. **AÑO**
-<!-- implementar exto: añadir descripcion -->
+Año calendario del registro académico. El período de estudio comprende desde 2001 hasta 2016, abarcando 16 años de datos históricos.
 
 El rango de años es el siguiente:
 
@@ -369,7 +390,7 @@ Ya que los rangos van de 2001 al 2016, existen 16 años, asi que como hay 16 val
 :::
 
 5. **TIPO DE EDUCACIÓN**
-<!-- implementar exto: añadir descripcion -->
+Naturaleza jurídica de la institución educativa: `PUBLICA` (financiada por el Estado) o `PRIVADA` (financiada por capital privado).
 
 ```{python}
 UNIQUE_VALUES["TIPO DE EDUCACIÓN"] = sorted(df['TIPO DE EDUCACIÓN'].unique())
@@ -383,7 +404,7 @@ for i, unique_value in enumerate(UNIQUE_VALUES["TIPO DE EDUCACIÓN"]):
 :::
 
 6. **MATRICULADOS HOMBRES**
-<!-- implementar exto: añadir descripcion -->
+Número total de estudiantes varones inscritos en una carrera, ciudad, año y tipo de institución determinados.
 
 ```{python}
 df["MATRICULADOS HOMBRES"].describe()
@@ -394,7 +415,7 @@ df["MATRICULADOS HOMBRES"].describe()
 :::
 
 7. **MATRICULADOS MUJERES**
-<!-- implementar exto: añadir descripcion -->
+Número total de estudiantes mujeres inscritas en una carrera, ciudad, año y tipo de institución determinados.
 
 ```{python}
 df["MATRICULADOS MUJERES"].describe()
@@ -405,7 +426,7 @@ df["MATRICULADOS MUJERES"].describe()
 :::
 
 8. **NUEVOS HOMBRES**
-<!-- implementar exto: añadir descripcion -->
+Cantidad de estudiantes varones que ingresaron por primera vez a la carrera en ese año lectivo.
 
 ```{python}
 df["NUEVOS HOMBRES"].describe()
@@ -416,7 +437,7 @@ df["NUEVOS HOMBRES"].describe()
 :::
 
 9. **NUEVOS MUJERES**
-<!-- implementar exto: añadir descripcion -->
+Cantidad de estudiantes mujeres que ingresaron por primera vez a la carrera en ese año lectivo.
 
 ```{python}
 df["NUEVOS MUJERES"].describe()
@@ -427,7 +448,7 @@ df["NUEVOS MUJERES"].describe()
 :::
 
 10. **TITULADOS HOMBRES**
-<!-- implementar exto: añadir descripcion -->
+Número de estudiantes varones que completaron y obtuvieron el título de la carrera en ese año lectivo.
 
 ```{python}
 df["TITULADOS HOMBRES"].describe()
@@ -438,7 +459,7 @@ df["TITULADOS HOMBRES"].describe()
 :::
 
 11. **TITULADOS MUJERES**
-<!-- implementar exto: añadir descripcion -->
+Número de estudiantes mujeres que completaron y obtuvieron el título de la carrera en ese año lectivo.
 
 ```{python}
 df["TITULADOS MUJERES"].describe()
@@ -518,26 +539,21 @@ El resumen estadístico por **CARRERA** no se realizará por que se tienen 243 v
 Primero veremos las variables categóricas:
 
 ```{python}
-num_rows = 3
-num_cols = 2
-# fig, axs = plt.subplots(num_rows, num_cols, figsize=(10, 10))
-for i in range(num_cols + num_rows):
-    # print("indice", i)
-    print("indice2", i//num_cols + i%num_cols)
-# for i in range(num_rows):
-#     for j in range(num_cols):
-#         print(i + j)
-#         # COLS_DISCRETE[i + j]
-#         # axs[i, j].hbar()
-
-# plt.show()
+#| echo: false
+fig, axes = plt.subplots(2, 3, figsize=(16, 9))
+fig.suptitle("Distribución de variables numéricas por género",
+             fontsize=15, fontweight="bold")
+for i, col in enumerate(COLS_DISCRETE):
+    ax = axes[i // 3][i % 3]
+    data = df[col][df[col] > 0]
+    ax.hist(data, bins=40, color=colores_box[i], edgecolor='white', alpha=0.75)
+    ax.set_title(CORTO[col], fontweight="bold", color=colores_box[i])
+    ax.set_xlabel("Cantidad de estudiantes")
+    ax.set_ylabel("Frecuencia")
+    ax.grid(alpha=0.2)
+plt.tight_layout()
+plt.show()
 ```
-
-COLS_DISCRETE = [
-    "MATRICULADOS HOMBRES", "MATRICULADOS MUJERES",
-    "NUEVOS HOMBRES", "NUEVOS MUJERES",
-    "TITULADOS HOMBRES", "TITULADOS MUJERES",
-]
 
 ## Valores faltantes
 
@@ -1028,71 +1044,6 @@ plt.show()
 
 ```{python}
 #| echo: false
-fig, axes = plt.subplots(1, 3, figsize=(18, 6))
-fig.suptitle(
-    "3b. Tratamiento de Outliers — Eliminación vs. Winsorización\n"
-    "(detección previa con regla IQR en ambos casos)",
-    fontsize=13, fontweight="bold",
-)
-labels = [CORTO[c] for c in COLS_DISCRETE]
-x = np.arange(len(labels))
-
-# Panel izquierdo — reducción de Std
-ax = axes[0]
-ax.bar(x - 0.18, [elim_res[c]["red"] for c in COLS_DISCRETE], 0.35,
-       label="Eliminación", color=RED,   alpha=0.85)
-ax.bar(x + 0.18, [win_res[c]["red"] for c in COLS_DISCRETE], 0.35,
-       label="Winsorización", color=GREEN, alpha=0.85)
-ax.set_xticks(x)
-ax.set_xticklabels(labels, rotation=15)
-ax.set_title("Reducción de Desv. Estándar (%)", fontsize=11)
-ax.set_ylabel("Reducción (%)")
-ax.legend()
-ax.grid(axis="y", alpha=0.2)
-
-# Panel central — media antes/después por tratamiento
-ax2 = axes[1]
-medias_orig = [df_work[c][df_work[c] > 0].mean() for c in COLS_DISCRETE]
-medias_elim = [elim_res[c]["new_m"] for c in COLS_DISCRETE]
-medias_win = [win_res[c]["win_m"] for c in COLS_DISCRETE]
-ax2.bar(x - 0.25, medias_orig, 0.24,
-        label="Original",     color=BLUE,   alpha=0.85)
-ax2.bar(x,        medias_elim, 0.24,
-        label="Eliminación",  color=RED,    alpha=0.85)
-ax2.bar(x + 0.25, medias_win,  0.24,
-        label="Winsorización", color=GREEN,  alpha=0.85)
-ax2.set_xticks(x)
-ax2.set_xticklabels(labels, rotation=15)
-ax2.set_title("Media original vs. tras tratamiento", fontsize=11)
-ax2.set_ylabel("Media de estudiantes")
-ax2.legend()
-ax2.grid(axis="y", alpha=0.2)
-
-# Panel derecho — costo: filas perdidas vs. filas modificadas
-ax3 = axes[2]
-filas_mod_win = [win_res[c]["n"] for c in COLS_DISCRETE]
-ax3.bar(x - 0.18, [filas_elim] * len(COLS_DISCRETE), 0.35,
-        label=f"Filas eliminadas ({filas_elim:,})", color=RED,    alpha=0.85)
-ax3.bar(x + 0.18, filas_mod_win,              0.35,
-        label="Filas modificadas (win)",           color=ORANGE, alpha=0.85)
-ax3.set_xticks(x)
-ax3.set_xticklabels(labels, rotation=15)
-ax3.set_title(
-    "Costo de cada tratamiento\n(filas perdidas vs. modificadas)", fontsize=11)
-ax3.set_ylabel("Cantidad de filas")
-ax3.legend(fontsize=8)
-ax3.grid(axis="y", alpha=0.2)
-
-plt.tight_layout()
-plt.show()
-```
-
-::: {.content-visible when-format="revealjs"}
-##
-:::
-
-```{python}
-#| echo: false
 fig, ax = plt.subplots(figsize=(12, 7))
 fig.suptitle("Matriculados Promedio por Área", fontsize=14, fontweight="bold")
 am = df_work.groupby(
@@ -1164,6 +1115,7 @@ ax.set_ylabel("Matriculados (miles)")
 ax.legend()
 ax.grid(alpha=0.2)
 plt.tight_layout()
+plt.show()
 ```
 
 ::: {.content-visible when-format="revealjs"}
@@ -1171,6 +1123,7 @@ plt.tight_layout()
 :::
 
 ```{python}
+#| echo: false
 fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 6))
 fig.suptitle("Comparativa: IQR vs Winsorización",
              fontsize=14, fontweight="bold")
@@ -1198,47 +1151,6 @@ ax2.legend()
 ax2.grid(axis="y", alpha=0.2)
 
 plt.tight_layout()
-```
-
-::: {.content-visible when-format="revealjs"}
-##
-:::
-
-```{python}
-#| echo: false
-fig, ax = plt.subplots(figsize=(10, 5))
-fig.suptitle("Media vs Mediana (justifica usar mediana para imputar)",
-             fontsize=13, fontweight="bold")
-medias = [df_work[c].mean() for c in COLS_DISCRETE]
-medianas = [df_work[c].median() for c in COLS_DISCRETE]
-ax.bar(x - 0.18, medias, 0.35, label="Media", color=PINK)
-ax.bar(x + 0.18, medianas, 0.35, label="Mediana", color=CYAN)
-ax.set_xticks(x)
-ax.set_xticklabels(labels)
-ax.legend()
-ax.grid(axis="y", alpha=0.2)
-plt.tight_layout()
-plt.show()
-```
-
-::: {.content-visible when-format="revealjs"}
-##
-:::
-
-```{python}
-#| echo: false
-fig, ax = plt.subplots(figsize=(10, 5))
-fig.suptitle("Media vs Mediana (justifica usar mediana para imputar)",
-             fontsize=13, fontweight="bold")
-medias = [df_work[c].mean() for c in COLS_DISCRETE]
-medianas = [df_work[c].median() for c in COLS_DISCRETE]
-ax.bar(x - 0.18, medias, 0.35, label="Media", color=PINK)
-ax.bar(x + 0.18, medianas, 0.35, label="Mediana", color=CYAN)
-ax.set_xticks(x)
-ax.set_xticklabels(labels)
-ax.legend()
-ax.grid(axis="y", alpha=0.2)
-plt.tight_layout()
 plt.show()
 ```
 
@@ -1257,6 +1169,489 @@ ax.set_xticks(x)
 ax.set_xticklabels(labels)
 ax.legend()
 ax.grid(axis="y", alpha=0.2)
+plt.tight_layout()
+plt.show()
+```
+
+::: {.content-visible when-format="revealjs"}
+##
+:::
+
+## Feature Engineering
+
+Se crean nuevas variables derivadas que capturan conceptos relevantes para el estudio de evolución y brecha de género:
+
+| Feature | Fórmula | Interpretación |
+|---------|---------|----------------|
+| `TOTAL_ENROLLED` | H + M | Tamaño total de matrícula |
+| `TOTAL_NEW` | NH + NM | Nuevos inscritos totales |
+| `TOTAL_GRADUATED` | TH + TM | Total titulados |
+| `GPI_ENROLLMENT` | M / (H+M) | Índice de Paridad de Género en matrícula |
+| `GPI_GRADUATED` | TM / (TH+TM) | Índice de Paridad de Género en titulación |
+| `GRADUATION_RATE` | Titulados / Matriculados | Eficiencia de titulación |
+
+```{python}
+# Feature engineering: total aggregates and gender parity indexes
+df_fe = df_work.copy()
+
+df_fe['TOTAL_ENROLLED'] = df_fe['MATRICULADOS HOMBRES'] + df_fe['MATRICULADOS MUJERES']
+df_fe['TOTAL_NEW'] = df_fe['NUEVOS HOMBRES'] + df_fe['NUEVOS MUJERES']
+df_fe['TOTAL_GRADUATED'] = df_fe['TITULADOS HOMBRES'] + df_fe['TITULADOS MUJERES']
+
+df_fe['GPI_ENROLLMENT'] = np.where(
+    df_fe['TOTAL_ENROLLED'] > 0,
+    df_fe['MATRICULADOS MUJERES'] / df_fe['TOTAL_ENROLLED'],
+    np.nan)
+
+df_fe['GPI_GRADUATED'] = np.where(
+    df_fe['TOTAL_GRADUATED'] > 0,
+    df_fe['TITULADOS MUJERES'] / df_fe['TOTAL_GRADUATED'],
+    np.nan)
+
+df_fe['GRADUATION_RATE'] = np.where(
+    df_fe['TOTAL_ENROLLED'] > 0,
+    df_fe['TOTAL_GRADUATED'] / df_fe['TOTAL_ENROLLED'],
+    np.nan)
+
+new_features = ['TOTAL_ENROLLED', 'TOTAL_NEW', 'TOTAL_GRADUATED',
+                'GPI_ENROLLMENT', 'GPI_GRADUATED', 'GRADUATION_RATE']
+print("Features creadas. Estadísticas:")
+print(df_fe[new_features].describe().round(3))
+```
+
+::: {.content-visible when-format="revealjs"}
+##
+:::
+
+Evolución temporal de matrículas y brecha de género:
+
+```{python}
+#| echo: false
+yearly = df_fe.groupby('AÑO').agg(
+    total_men=('MATRICULADOS HOMBRES', 'sum'),
+    total_women=('MATRICULADOS MUJERES', 'sum'),
+    gpi_mean=('GPI_ENROLLMENT', 'mean'),
+    grad_men=('TITULADOS HOMBRES', 'sum'),
+    grad_women=('TITULADOS MUJERES', 'sum')
+).reset_index()
+
+fig, axes = plt.subplots(2, 2, figsize=(16, 12))
+
+ax = axes[0, 0]
+ax.stackplot(yearly['AÑO'], yearly['total_men'], yearly['total_women'],
+             labels=['Hombres', 'Mujeres'],
+             colors=[COLORS['MEN'], COLORS['WOMEN']], alpha=0.85)
+ax.set_title('Evolución total de matrículas', fontweight='bold')
+ax.set_xlabel('Año'); ax.set_ylabel('Matriculados')
+ax.legend(); ax.tick_params(axis='x', rotation=45)
+
+ax = axes[0, 1]
+ax.plot(yearly['AÑO'], yearly['gpi_mean'], 'o-', color='#9C27B0', linewidth=2)
+ax.axhline(0.5, color='gray', linestyle='--', label='Paridad (0.5)')
+ax.fill_between(yearly['AÑO'], yearly['gpi_mean'], 0.5,
+                where=yearly['gpi_mean'] >= 0.5, alpha=0.2, color=COLORS['WOMEN'])
+ax.fill_between(yearly['AÑO'], yearly['gpi_mean'], 0.5,
+                where=yearly['gpi_mean'] < 0.5, alpha=0.2, color=COLORS['MEN'])
+ax.set_title('Índice de Paridad de Género — Matrícula', fontweight='bold')
+ax.set_xlabel('Año'); ax.set_ylabel('GPI (0=H, 1=M, 0.5=paridad)')
+ax.set_ylim(0, 1); ax.legend(); ax.tick_params(axis='x', rotation=45)
+
+ax = axes[1, 0]
+x_yr = yearly['AÑO']; w = 0.4
+ax.bar(x_yr - w/2, yearly['grad_men'], w, label='Hombres',
+       color=COLORS['MEN'], alpha=0.85)
+ax.bar(x_yr + w/2, yearly['grad_women'], w, label='Mujeres',
+       color=COLORS['WOMEN'], alpha=0.85)
+ax.set_title('Titulados por género por año', fontweight='bold')
+ax.set_xlabel('Año'); ax.set_ylabel('Titulados')
+ax.legend(); ax.tick_params(axis='x', rotation=45)
+
+ax = axes[1, 1]
+gpi_area = df_fe.groupby('ÁREA')['GPI_ENROLLMENT'].mean().sort_values()
+colors_area = [COLORS['WOMEN'] if v >= 0.5 else COLORS['MEN'] for v in gpi_area.values]
+gpi_area.plot(kind='barh', ax=ax, color=colors_area, alpha=0.85)
+ax.axvline(0.5, color='gray', linestyle='--')
+ax.set_title('GPI promedio por área del conocimiento', fontweight='bold')
+ax.set_xlabel('GPI'); ax.set_xlim(0, 1)
+
+plt.suptitle('Feature Engineering: Evolución y Brecha de Género (2001–2016)',
+             fontsize=14, fontweight='bold', y=1.01)
+plt.tight_layout()
+plt.show()
+```
+
+::: {.content-visible when-format="revealjs"}
+##
+:::
+
+## Duplicados
+
+Se analizan duplicados exactos (todas las columnas iguales) y duplicados por clave natural (CARRERA + CIUDAD + AÑO + TIPO DE EDUCACIÓN).
+
+```{python}
+natural_key = ['CARRERA', 'CIUDAD', 'AÑO', 'TIPO DE EDUCACIÓN']
+dup_exact = df.duplicated().sum()
+dup_key = df.duplicated(subset=natural_key, keep=False).sum()
+
+print(f'Duplicados exactos: {dup_exact}')
+print(f'Duplicados por clave natural {natural_key}: {dup_key}')
+
+if dup_exact == 0 and dup_key == 0:
+    print('\nNo se encontraron duplicados. Cada registro es único.')
+else:
+    print('\nSe encontraron duplicados. Revisar antes de continuar.')
+```
+
+::: {.content-visible when-format="revealjs"}
+##
+:::
+
+## Codificación de Variables
+
+Los algoritmos de ML requieren entrada numérica. Se codifican las variables categóricas:
+
+- `TIPO DE EDUCACIÓN`: Label Encoding (binario)
+- `CIUDAD`: One-Hot Encoding (9 categorías sin orden)
+- `ÁREA`: One-Hot Encoding (10 categorías sin orden)
+
+```{python}
+label_encoder = LabelEncoder()
+df_encoded = df_fe.copy()
+df_encoded['TIPO_ENCODED'] = label_encoder.fit_transform(df_encoded['TIPO DE EDUCACIÓN'])
+print('Mapeo TIPO DE EDUCACIÓN → numérico:')
+for cls, idx in zip(label_encoder.classes_, label_encoder.transform(label_encoder.classes_)):
+    print(f'  {cls} → {idx}')
+
+df_encoded = pd.get_dummies(df_encoded, columns=['CIUDAD', 'ÁREA'],
+                            prefix=['CIUDAD', 'AREA'])
+print(f'\nDimensiones tras encoding: {df_encoded.shape}')
+```
+
+::: {.content-visible when-format="revealjs"}
+##
+:::
+
+## Balanceo de Datos
+
+Se analiza la distribución entre tipos de institución y su relación con la paridad de género.
+
+```{python}
+#| echo: false
+fig, axes = plt.subplots(1, 3, figsize=(16, 5))
+
+type_counts = df_fe['TIPO DE EDUCACIÓN'].value_counts()
+axes[0].pie(type_counts, labels=type_counts.index,
+            colors=[COLORS['PUBLIC'], COLORS['PRIVATE']],
+            autopct='%1.1f%%', startangle=140)
+axes[0].set_title('Registros: Pública vs Privada', fontweight='bold')
+
+enrollment_by_type = df_fe.groupby('TIPO DE EDUCACIÓN')[
+    ['MATRICULADOS HOMBRES', 'MATRICULADOS MUJERES']].sum()
+enrollment_by_type.plot(kind='bar', ax=axes[1],
+                        color=[COLORS['MEN'], COLORS['WOMEN']], alpha=0.85)
+axes[1].set_title('Total matrículas por tipo', fontweight='bold')
+axes[1].set_ylabel('Matriculados')
+axes[1].tick_params(axis='x', rotation=0)
+
+for edu_type, color in [('PUBLICA', COLORS['PUBLIC']), ('PRIVADA', COLORS['PRIVATE'])]:
+    data = df_fe[df_fe['TIPO DE EDUCACIÓN'] == edu_type]['GPI_ENROLLMENT'].dropna()
+    axes[2].hist(data, bins=20, alpha=0.6, color=color, label=edu_type, edgecolor='white')
+axes[2].axvline(0.5, color='gray', linestyle='--', label='Paridad')
+axes[2].set_title('Distribución GPI: Pública vs Privada', fontweight='bold')
+axes[2].set_xlabel('GPI Matrícula'); axes[2].legend()
+
+plt.suptitle('Análisis de Balanceo por Tipo de Institución', fontweight='bold', y=1.01)
+plt.tight_layout()
+plt.show()
+```
+
+::: {.content-visible when-format="revealjs"}
+##
+:::
+
+## Modelos Supervisados
+
+### Objetivo
+Predecir el número total de titulados en función del año, tipo de institución, área, ciudad y matrículas.
+
+### Modelos
+- **Regresión Lineal**: baseline interpretable
+- **Árbol de Decisión**: captura relaciones no lineales
+
+```{python}
+df_ml = df_fe[df_fe['TOTAL_ENROLLED'] > 0].copy()
+
+le_type = LabelEncoder()
+le_city = LabelEncoder()
+le_area = LabelEncoder()
+df_ml['TIPO_N'] = le_type.fit_transform(df_ml['TIPO DE EDUCACIÓN'])
+df_ml['CIUDAD_N'] = le_city.fit_transform(df_ml['CIUDAD'])
+df_ml['AREA_N'] = le_area.fit_transform(df_ml['ÁREA'])
+
+features = ['AÑO', 'TIPO_N', 'CIUDAD_N', 'AREA_N',
+            'MATRICULADOS HOMBRES', 'MATRICULADOS MUJERES']
+target = 'TOTAL_GRADUATED'
+
+X = df_ml[features].values
+y = df_ml[target].values
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42)
+
+print(f'Train: {X_train.shape[0]:,} | Test: {X_test.shape[0]:,}')
+
+lin_reg = LinearRegression()
+lin_reg.fit(X_train, y_train)
+y_pred_lr = lin_reg.predict(X_test)
+rmse_lr = np.sqrt(mean_squared_error(y_test, y_pred_lr))
+r2_lr = r2_score(y_test, y_pred_lr)
+print(f'\nREGRESIÓN LINEAL: RMSE={rmse_lr:.2f}, R²={r2_lr:.4f}')
+
+tree = DecisionTreeRegressor(max_depth=5, min_samples_leaf=20, random_state=42)
+tree.fit(X_train, y_train)
+y_pred_tree = tree.predict(X_test)
+rmse_tree = np.sqrt(mean_squared_error(y_test, y_pred_tree))
+r2_tree = r2_score(y_test, y_pred_tree)
+print(f'ÁRBOL DECISIÓN:   RMSE={rmse_tree:.2f}, R²={r2_tree:.4f}')
+```
+
+::: {.content-visible when-format="revealjs"}
+##
+:::
+
+```{python}
+#| echo: false
+fig, axes = plt.subplots(1, 2, figsize=(14, 5))
+
+for ax, (name, y_pred, color) in zip(axes, [
+    ('Regresión Lineal', y_pred_lr, '#2196F3'),
+    ('Árbol de Decisión', y_pred_tree, '#FF5722')
+]):
+    ax.scatter(y_test, y_pred, alpha=0.3, color=color, s=15)
+    lim = max(y_test.max(), y_pred.max())
+    ax.plot([0, lim], [0, lim], 'k--', lw=1.5)
+    ax.set_xlabel('Valor real')
+    ax.set_ylabel('Valor predicho')
+    r2_val = r2_lr if 'Lineal' in name else r2_tree
+    rmse_val = rmse_lr if 'Lineal' in name else rmse_tree
+    ax.set_title(f'{name}\nRMSE={rmse_val:.1f}, R²={r2_val:.3f}', fontweight='bold')
+
+plt.suptitle('Predicción de Titulados: Valor Real vs Predicho', fontweight='bold', y=1.01)
+plt.tight_layout()
+plt.show()
+```
+
+::: {.content-visible when-format="revealjs"}
+##
+:::
+
+```{python}
+#| echo: false
+importances = pd.Series(tree.feature_importances_, index=features).sort_values(ascending=True)
+fig, ax = plt.subplots(figsize=(8, 4))
+importances.plot(kind='barh', ax=ax, color='#FF5722', alpha=0.85)
+ax.set_title('Importancia de Features — Árbol de Decisión', fontweight='bold')
+ax.set_xlabel('Importancia relativa')
+plt.tight_layout()
+plt.show()
+```
+
+::: {.content-visible when-format="revealjs"}
+##
+:::
+
+## Modelos No Supervisados
+
+### Objetivo
+Identificar grupos de departamentos con patrones similares de evolución educativa y brecha de género.
+
+### Técnicas
+- **K-Means**: clustering para identificar grupos de departamentos
+- **Dendrograma**: visualización jerárquica de similitud
+
+```{python}
+dept_stats = df_fe.groupby('CIUDAD').agg(
+    total_enrolled=('TOTAL_ENROLLED', 'sum'),
+    total_graduated=('TOTAL_GRADUATED', 'sum'),
+    gpi_enrollment=('GPI_ENROLLMENT', 'mean'),
+    gpi_graduated=('GPI_GRADUATED', 'mean'),
+    graduation_rate=('GRADUATION_RATE', 'mean'),
+    n_careers=('CARRERA', 'nunique')
+).fillna(0)
+
+print('Estadísticas por departamento:')
+print(dept_stats.round(3).to_string())
+```
+
+::: {.content-visible when-format="revealjs"}
+##
+:::
+
+```{python}
+scaler_cluster = StandardScaler()
+X_cl = scaler_cluster.fit_transform(dept_stats)
+dept_labels = dept_stats.index.tolist()
+
+inertias = []
+k_range = range(2, 9)
+for k in k_range:
+    km = KMeans(n_clusters=k, random_state=42, n_init=10)
+    km.fit(X_cl)
+    inertias.append(km.inertia_)
+
+silhouettes = []
+for k in k_range:
+    km = KMeans(n_clusters=k, random_state=42, n_init=10)
+    labels = km.fit_predict(X_cl)
+    sil = silhouette_score(X_cl, labels)
+    silhouettes.append(sil)
+    print(f'  k={k}: inercia={km.inertia_:.2f}, silhouette={sil:.4f}')
+
+k_optimal = list(k_range)[silhouettes.index(max(silhouettes))]
+print(f'\nk óptimo por Silhouette: {k_optimal}')
+
+km_final = KMeans(n_clusters=k_optimal, random_state=42, n_init=10)
+clusters = km_final.fit_predict(X_cl)
+dept_stats['CLUSTER'] = clusters
+
+print('\n=== ASIGNACIÓN DE CLUSTERS ===')
+for dept, row in dept_stats.iterrows():
+    print(f'  {dept:15s} → Cluster {row["CLUSTER"]}')
+```
+
+::: {.content-visible when-format="revealjs"}
+##
+:::
+
+```{python}
+#| echo: false
+fig, axes = plt.subplots(1, 2, figsize=(14, 5))
+
+axes[0].plot(list(k_range), inertias, 'o-', color='#3F51B5', linewidth=2)
+axes[0].set_title('Método del Codo', fontweight='bold')
+axes[0].set_xlabel('Número de clusters (k)')
+axes[0].set_ylabel('Inercia')
+axes[0].axvline(k_optimal, color='red', linestyle='--', label=f'k* = {k_optimal}')
+axes[0].legend()
+
+axes[1].bar(list(k_range), silhouettes, color='#009688', alpha=0.85, edgecolor='white')
+axes[1].set_title('Silhouette Score por k', fontweight='bold')
+axes[1].set_xlabel('Número de clusters (k)')
+axes[1].set_ylabel('Silhouette Score')
+axes[1].axvline(k_optimal, color='red', linestyle='--')
+
+plt.suptitle('Determinación del k óptimo para K-Means', fontweight='bold', y=1.01)
+plt.tight_layout()
+plt.show()
+```
+
+::: {.content-visible when-format="revealjs"}
+##
+:::
+
+```{python}
+#| echo: false
+pca = PCA(n_components=2)
+X_pca = pca.fit_transform(X_cl)
+
+fig, axes = plt.subplots(1, 2, figsize=(15, 6))
+
+ax = axes[0]
+for c in sorted(dept_stats['CLUSTER'].unique()):
+    mask = dept_stats['CLUSTER'] == c
+    idxs = [i for i, d in enumerate(dept_labels) if dept_stats.loc[d, 'CLUSTER'] == c]
+    ax.scatter(X_pca[idxs, 0], X_pca[idxs, 1],
+               color=COLORS_CLUSTER[c], s=180, zorder=3,
+               label=f'Cluster {c}', edgecolors='white', linewidth=1.5)
+    for idx in idxs:
+        ax.annotate(dept_labels[idx],
+                    (X_pca[idx, 0], X_pca[idx, 1]),
+                    fontsize=9, ha='center', va='bottom',
+                    xytext=(0, 8), textcoords='offset points')
+
+centroids_pca = pca.transform(km_final.cluster_centers_)
+ax.scatter(centroids_pca[:, 0], centroids_pca[:, 1],
+           marker='X', s=300, color='black', zorder=5, label='Centroide')
+ax.set_title(f'K-Means (k={k_optimal}) — PCA', fontweight='bold')
+ax.set_xlabel(f'PC1 ({pca.explained_variance_ratio_[0]*100:.1f}%)')
+ax.set_ylabel(f'PC2 ({pca.explained_variance_ratio_[1]*100:.1f}%)')
+ax.legend()
+
+ax2 = axes[1]
+for c in sorted(dept_stats['CLUSTER'].unique()):
+    sub = dept_stats[dept_stats['CLUSTER'] == c]
+    ax2.scatter(sub['total_enrolled'], sub['gpi_enrollment'],
+                color=COLORS_CLUSTER[c], s=180, zorder=3,
+                label=f'Cluster {c}', edgecolors='white', linewidth=1.5)
+    for dept, row in sub.iterrows():
+        ax2.annotate(dept, (row['total_enrolled'], row['gpi_enrollment']),
+                     fontsize=9, ha='center', va='bottom',
+                     xytext=(0, 8), textcoords='offset points')
+ax2.axhline(0.5, color='gray', linestyle='--', alpha=0.7, label='Paridad (0.5)')
+ax2.set_title('Matrícula Total vs GPI por Departamento', fontweight='bold')
+ax2.set_xlabel('Matrícula total (2001–2016)')
+ax2.set_ylabel('GPI promedio')
+ax2.legend()
+
+plt.suptitle('K-Means — Agrupación de Departamentos de Bolivia',
+             fontsize=13, fontweight='bold', y=1.01)
+plt.tight_layout()
+plt.show()
+```
+
+::: {.content-visible when-format="revealjs"}
+##
+:::
+
+```{python}
+#| echo: false
+fig, ax = plt.subplots(figsize=(12, 6))
+
+Z = linkage(X_cl, method='ward')
+dendrogram(
+    Z,
+    labels=dept_labels,
+    color_threshold=Z[-k_optimal+1, 2],
+    leaf_rotation=45,
+    leaf_font_size=11,
+    ax=ax
+)
+ax.axhline(y=Z[-k_optimal+1, 2], color='red', linestyle='--',
+           label=f'Corte k={k_optimal} clusters')
+ax.set_title('Dendrograma — Agrupación de Departamentos\n(Linkage: Ward, Distancia: Euclidiana)',
+             fontweight='bold')
+ax.set_ylabel('Distancia (Ward)')
+ax.legend()
+plt.tight_layout()
+plt.show()
+```
+
+::: {.content-visible when-format="revealjs"}
+##
+:::
+
+```{python}
+print('=== PERFIL DE CADA CLUSTER ===')
+profile = dept_stats.groupby('CLUSTER').mean().round(3)
+print(profile.to_string())
+```
+
+::: {.content-visible when-format="revealjs"}
+##
+:::
+
+```{python}
+#| echo: false
+profile_cols = ['total_enrolled', 'total_graduated', 'gpi_enrollment',
+                'gpi_graduated', 'graduation_rate', 'n_careers']
+profile_data = dept_stats[profile_cols + ['CLUSTER']].set_index(
+    dept_stats.index + ' (C' + dept_stats['CLUSTER'].astype(str) + ')'
+)[profile_cols]
+
+profile_scaled = (profile_data - profile_data.min()) / (profile_data.max() - profile_data.min())
+fig, ax = plt.subplots(figsize=(10, 5))
+sns.heatmap(profile_scaled, annot=profile_data.round(2), fmt='.2f',
+            cmap='YlOrRd', linewidths=0.5, ax=ax, annot_kws={'size': 9})
+ax.set_title('Perfil de Departamentos por Cluster (valores normalizados)', fontweight='bold')
 plt.tight_layout()
 plt.show()
 ```
