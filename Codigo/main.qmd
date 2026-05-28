@@ -512,6 +512,33 @@ metrics_by_discrete_column("ÁREA")
 :::
 
 El resumen estadístico por **CARRERA** no se realizará por que se tienen 243 valores
+
+## Gráficos descriptivos
+
+Primero veremos las variables categóricas:
+
+```{python}
+num_rows = 3
+num_cols = 2
+# fig, axs = plt.subplots(num_rows, num_cols, figsize=(10, 10))
+for i in range(num_cols + num_rows):
+    # print("indice", i)
+    print("indice2", i//num_cols + i%num_cols)
+# for i in range(num_rows):
+#     for j in range(num_cols):
+#         print(i + j)
+#         # COLS_DISCRETE[i + j]
+#         # axs[i, j].hbar()
+
+# plt.show()
+```
+
+COLS_DISCRETE = [
+    "MATRICULADOS HOMBRES", "MATRICULADOS MUJERES",
+    "NUEVOS HOMBRES", "NUEVOS MUJERES",
+    "TITULADOS HOMBRES", "TITULADOS MUJERES",
+]
+
 ## Valores faltantes
 
 Viendo el diagnósico con NaN literales
